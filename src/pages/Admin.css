@@ -1,0 +1,74 @@
+/* Admin.css — dashboard shell styles */
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-block: var(--space-8);
+  min-height: 100svh;
+  background-color: var(--color-background);
+}
+
+/* ── Header bar ─────────────────────────────────────────────────────────── */
+.admin-dashboard__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-block-end: var(--space-6);
+  border-block-end: 1px solid var(--color-border);
+  margin-block-end: var(--space-8);
+}
+
+.admin-dashboard__title {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  color: var(--color-primary);
+  margin-block-end: var(--space-1);
+}
+
+.admin-dashboard__email {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  direction: ltr;
+  text-align: right;
+}
+
+/* ── Logout button ──────────────────────────────────────────────────────── */
+.admin-dashboard__logout {
+  padding: var(--space-2) var(--space-6);
+  border: 1.5px solid var(--color-danger);
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.admin-dashboard__logout:hover {
+  background-color: var(--color-danger);
+  color: #fff;
+}
+
+.admin-dashboard__logout:focus-visible {
+  outline: 3px solid var(--color-danger);
+  outline-offset: 3px;
+}
+
+/* ── Placeholder ────────────────────────────────────────────────────────── */
+.admin-dashboard__body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.admin-dashboard__placeholder {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  text-align: center;
+  max-width: 36rem;
+}

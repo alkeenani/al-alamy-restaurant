@@ -1,0 +1,10 @@
+.admin-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:1rem;background:var(--color-overlay);overflow:auto}
+.admin-modal__panel{width:min(100%,42rem);max-height:calc(100svh - 2rem);display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden}
+.admin-modal__panel--lg{width:min(100%,56rem)}
+.admin-modal__header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-block-end:1px solid var(--color-border);background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--color-primary-soft) 35%, #fff));position:sticky;top:0;z-index:1}
+.admin-modal__title{font-size:1.125rem;color:var(--color-primary);margin:0}
+.admin-modal__close{width:2.25rem;height:2.25rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface);font-size:1.25rem;line-height:1;color:var(--color-primary);cursor:pointer}
+.admin-modal__close:hover{background:var(--color-primary-soft);border-color:color-mix(in srgb,var(--color-primary) 30%, var(--color-border))}
+.admin-modal__body{padding:1rem 1.25rem;overflow:auto}
+.admin-modal__footer{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-start;padding:1rem 1.25rem;border-block-start:1px solid var(--color-border);background:var(--color-background)}
+@media (max-width: 720px){.admin-modal{padding:.5rem;align-items:end}.admin-modal__panel,.admin-modal__panel--lg{width:100%;max-height:calc(100svh - 1rem);border-radius:1rem 1rem .75rem .75rem}.admin-modal__body,.admin-modal__header,.admin-modal__footer{padding-inline:1rem}}

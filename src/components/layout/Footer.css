@@ -1,0 +1,205 @@
+.site-footer {
+  margin-block-start: var(--space-12);
+  background-color: var(--color-primary);
+  color: rgb(255 255 255 / 78%);
+}
+
+.site-footer__inner {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: clamp(2.5rem, 6vw, 4rem) var(--space-6);
+}
+
+.site-footer__restaurant {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.site-footer__identity {
+  min-width: 0;
+}
+
+.site-footer__name {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.site-footer__latin {
+  margin-block-start: var(--space-1);
+  color: rgb(255 255 255 / 68%);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.site-footer__owner {
+  margin-block-start: var(--space-3);
+  color: rgb(255 255 255 / 82%);
+  font-size: 0.8125rem;
+}
+
+.site-footer__heading {
+  margin-block-end: var(--space-3);
+  color: var(--color-accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.site-footer__list {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  font-size: 0.8125rem;
+}
+
+.site-footer__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.site-footer__item svg {
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+.site-footer__list a {
+  color: rgb(255 255 255 / 88%);
+  text-decoration: underline;
+  text-decoration-color: rgb(255 255 255 / 24%);
+  text-underline-offset: 0.2em;
+  transition:
+    color var(--transition-fast),
+    text-decoration-color var(--transition-fast);
+}
+
+.site-footer__list a:hover {
+  color: var(--color-white);
+  text-decoration-color: var(--color-accent);
+}
+
+.site-footer a:focus-visible {
+  outline-color: var(--color-accent);
+}
+
+.site-footer__icon-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.site-footer__icon-link {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: var(--radius-full);
+  background-color: rgb(255 255 255 / 5%);
+  color: rgb(255 255 255 / 78%);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.site-footer__icon-link:hover {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  transform: translateY(-1px);
+}
+
+.site-footer__icon-link:focus-visible {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.site-footer__icon-link:active {
+  transform: scale(0.96);
+}
+
+.site-footer__developer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  padding-block-start: var(--space-6);
+  border-block-start: 1px solid rgb(255 255 255 / 12%);
+}
+
+.site-footer__developer-heading {
+  min-width: 0;
+}
+
+.site-footer__credit {
+  color: rgb(255 255 255 / 62%);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.site-footer__developer-phone {
+  margin-block-start: 0.125rem;
+  color: rgb(255 255 255 / 52%);
+  font-size: 0.6875rem;
+}
+
+.site-footer__developer-phone a {
+  color: rgb(255 255 255 / 72%);
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  text-decoration-color: rgb(255 255 255 / 22%);
+  text-underline-offset: 0.2em;
+  transition:
+    color var(--transition-fast),
+    text-decoration-color var(--transition-fast);
+}
+
+.site-footer__developer-phone a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.site-footer__developer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.site-footer__developer-links .site-footer__icon-link {
+  color: rgb(255 255 255 / 58%);
+}
+
+.site-footer__developer-links .site-footer__icon-link:hover {
+  color: var(--color-on-accent);
+}
+
+.site-footer__bottom {
+  padding-block: var(--space-4);
+  border-block-start: 1px solid rgb(255 255 255 / 12%);
+  color: rgb(255 255 255 / 56%);
+  font-size: 0.6875rem;
+  text-align: center;
+}
+
+@media (min-width: 48rem) {
+  .site-footer__restaurant {
+    grid-template-columns: 1.15fr 1fr 1fr;
+    align-items: start;
+    gap: var(--space-8);
+  }
+}
+
+@media (min-width: 64rem) {
+  .site-footer__developer {
+    flex-wrap: nowrap;
+  }
+}
