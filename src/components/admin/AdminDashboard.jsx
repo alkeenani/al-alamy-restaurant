@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import ToastViewport from '../common/ToastViewport.jsx'
 import { useToasts } from '../../hooks/useToasts.js'
-import { fetchAdminMenuData, mapSupabaseError } from '../../lib/menuApi.js'
+import { ensureRequiredMenuCategories, ensureRequiredSandwichProducts, fetchAdminMenuData, mapSupabaseError } from '../../lib/menuApi.js'
 import CategoriesManager from './CategoriesManager.jsx'
 import ProductsManager from './ProductsManager.jsx'
 import './AdminDashboard.css'
@@ -11,18 +11,72 @@ export default function AdminDashboard({ user, onLogout }) {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState({ categories: [], products: [], groups: [], values: [], combinations: [], combinationValues: [] })
   const [loadedOnce, setLoadedOnce] = useState(false)
+  const [categoriesEnsured, setCategoriesEnsured] = useState(false)
+  const [sandwichProductsEnsured, setSandwichProductsEnsured] = useState(false)
   const { toasts, showToast } = useToasts()
 
   async function refresh() {
     setLoading(true)
-    const { data: next, error } = await fetchAdminMenuData()
-    setLoading(false)
-    if (error) {
-      showToast(mapSupabaseError(error, 'تعذر تحميل بيانات القائمة.'), 'error')
-      return
+    try {
+      const { data: next, error } = await fetchAdminMenuData()
+      if (error) {
+        showToast(mapSupabaseError(error, 'تعذر تحميل بيانات القائمة.'), 'error')
+        return
+      }
+
+      let finalData = next
+      if (!categoriesEnsured) {
+        const ensured = await ensureRequiredMenuCategories(next.categories)
+        if (ensured.error || ensured.report?.errors?.length) {
+          const syncError = ensured.error || ensured.report.errors[0].error
+          const details = syncError ? `${syncError.code || 'ERROR'}: ${syncError.message || ''}${syncError.hint ? ` (${syncError.hint})` : ''}${syncError.details ? ` - ${syncError.details}` : ''}` : ''
+          console.error('Category sync failed:', syncError, ensured.report)
+          showToast(`تعذر مزامنة أقسام القائمة المطلوبة. ${details}`.trim(), 'error')
+          setData(next)
+          setLoadedOnce(true)
+          return
+        }
+
+        setCategoriesEnsured(true)
+        const changed = ((ensured.report?.added?.length || 0) + (ensured.report?.updated?.length || 0)) > 0
+        if (changed) {
+          const reloaded = await fetchAdminMenuData()
+          if (!reloaded.error && reloaded.data) {
+            finalData = reloaded.data
+          } else {
+            finalData = { ...next, categories: ensured.data?.categories || next.categories }
+          }
+        } else {
+          finalData = { ...next, categories: ensured.data?.categories || next.categories }
+        }
+      }
+
+      if (!sandwichProductsEnsured) {
+        const ensuredProducts = await ensureRequiredSandwichProducts()
+        if (ensuredProducts.error || ensuredProducts.report?.errors?.length) {
+          const syncError = ensuredProducts.error || ensuredProducts.report.errors[0].error
+          const details = syncError ? `${syncError.code || 'ERROR'}: ${syncError.message || ''}${syncError.hint ? ` (${syncError.hint})` : ''}${syncError.details ? ` - ${syncError.details}` : ''}` : ''
+          console.error('Sandwich products sync failed:', syncError, ensuredProducts.report)
+          showToast(`تعذر مزامنة منتجات السندوتشات. ${details}`.trim(), 'error')
+          setData(finalData)
+          setLoadedOnce(true)
+          return
+        }
+
+        setSandwichProductsEnsured(true)
+        if ((ensuredProducts.report?.added?.length || 0) > 0) {
+          const reloaded = await fetchAdminMenuData()
+          if (!reloaded.error && reloaded.data) {
+            finalData = reloaded.data
+          }
+        }
+      }
+
+      setData(finalData)
+      setLoadedOnce(true)
+    } finally {
+      setLoading(false)
     }
-    setData(next)
-    setLoadedOnce(true)
   }
 
   // lazy load when entering data tabs

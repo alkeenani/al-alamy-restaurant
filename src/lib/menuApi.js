@@ -1,5 +1,21 @@
 import { supabase } from './supabase.js'
 
+async function verifyAdminSession() {
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError) return { user: null, error: userError }
+  if (!user) return { user: null, error: { message: 'No authenticated admin session.', code: 'NO_AUTH_SESSION' } }
+
+  const { data, error } = await supabase
+    .from('admin_users')
+    .select('user_id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (error) return { user: null, error }
+  if (!data) return { user: null, error: { message: 'Authenticated user is not authorized as admin.', code: 'NOT_ADMIN' } }
+  return { user, error: null }
+}
+
 export function mapSupabaseError(error, fallback = 'حدث خطأ غير متوقع. يرجى المحاولة مجدداً.') {
   if (!error) return fallback
   const msg = error.message || ''
@@ -187,6 +203,166 @@ export async function updateCategory(id, patch) {
 }
 export async function deleteCategory(id) {
   return supabase.from('categories').delete().eq('id', id)
+}
+
+export const REQUIRED_MENU_CATEGORIES = [
+  { name: 'السندوتشات', slug: 'sandwiches', sort_order: 1 },
+  { name: 'الكريب', slug: 'crepes', sort_order: 2 },
+  { name: 'البيتزا', slug: 'pizza', sort_order: 3 },
+  { name: 'أطباق المكرونة', slug: 'pasta-dishes', sort_order: 4 },
+  { name: 'أطباق الريزو', slug: 'rizzo-dishes', sort_order: 5 },
+  { name: 'وجبات الفراخ واللحوم', slug: 'chicken-meat-meals', sort_order: 6 },
+  { name: 'التسويات الخارجية والشوي', slug: 'outdoor-grill', sort_order: 7 },
+  { name: 'بوكسات اللمة الحلوة', slug: 'sweet-gathering-boxes', sort_order: 8 },
+]
+
+export const SANDWICHES_CATEGORY_ID = '8682e8a5-f665-4023-a6ec-044b7f5efd8d'
+
+export const REQUIRED_SANDWICH_PRODUCTS = [
+  { name: 'بانيه', base_price: 50 },
+  { name: 'زنجر', base_price: 45 },
+  { name: 'كرنشي', base_price: 45 },
+  { name: 'فاهيتا', base_price: 50 },
+  { name: 'شاورما', base_price: 25 }, // source menu value; flagged for owner confirmation
+  { name: 'شيش طاووق', base_price: 65 },
+  { name: 'كوردون بلو', base_price: 60 },
+  { name: 'كفتة', base_price: 55 },
+  { name: 'كبدة', base_price: 60 },
+  { name: 'سوسيس', base_price: 60 },
+  { name: 'سجق إسكندراني', base_price: 65 },
+  { name: 'حواوشي', base_price: 65 },
+  { name: 'كباب حلة', base_price: 65 },
+  { name: 'داود باشا', base_price: 70 },
+  { name: 'روزبيف', base_price: 65 },
+  { name: 'كلاسيك برجر', base_price: 65 },
+]
+
+export async function ensureRequiredSandwichProducts() {
+  const { user, error: authError } = await verifyAdminSession()
+  if (authError || !user) {
+    return { data: null, error: authError || { message: 'Admin authorization required for product sync.', code: 'NOT_ADMIN' }, report: null }
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('products')
+    .select('id,name,base_price,category_id,sort_order,is_available')
+    .eq('category_id', SANDWICHES_CATEGORY_ID)
+
+  if (fetchError) return { data: null, error: fetchError, report: null }
+
+  const existingByName = new Map((existing || []).map((p) => [p.name, p]))
+  const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
+  const report = { existing: [], added: [], errors: [] }
+  const toInsert = []
+
+  REQUIRED_SANDWICH_PRODUCTS.forEach((req, idx) => {
+    const found = existingByName.get(req.name)
+    if (found) {
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    } else {
+      toInsert.push({
+        name: req.name,
+        base_price: req.base_price,
+        category_id: SANDWICHES_CATEGORY_ID,
+        is_available: true,
+        description: null,
+        sort_order: maxSort + 1 + idx,
+      })
+    }
+  })
+
+  if (toInsert.length) {
+    const { data: inserted, error: insertError } = await supabase
+      .from('products')
+      .insert(toInsert)
+      .select('id,name,base_price,category_id,sort_order,is_available')
+
+    if (insertError) {
+      report.errors.push({ action: 'insert', error: insertError })
+      return { data: { report }, error: insertError, report }
+    }
+    report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  const error = report.errors[0]?.error || null
+  return { data: { report }, error, report }
+}
+
+export async function ensureRequiredMenuCategories(existingCategories) {
+  const { user, error: authError } = await verifyAdminSession()
+  if (authError || !user) {
+    return { data: null, error: authError || { message: 'Admin authorization required for category sync.', code: 'NOT_ADMIN' }, report: null }
+  }
+
+  let categories = existingCategories
+  if (!Array.isArray(categories)) {
+    const { data, error } = await supabase.from('categories').select('*')
+    if (error) return { data: null, error, report: null }
+    categories = data || []
+  }
+
+  const report = { existing: [], added: [], updated: [], errors: [] }
+
+  for (const required of REQUIRED_MENU_CATEGORIES) {
+    let match = categories.find((c) => c.slug === required.slug)
+    if (!match && required.slug === 'sandwiches') {
+      match = categories.find((c) => c.id === '8682e8a5-f665-4023-a6ec-044b7f5efd8d' || String(c.name || '').includes('ساندوتش'))
+    }
+    if (!match && required.slug === 'crepes') {
+      match = categories.find((c) => c.id === '08a1f94f-46b1-4e83-bb00-59ffcb3287b2' || String(c.name || '').includes('كريب'))
+    }
+    if (!match) match = categories.find((c) => c.name === required.name)
+
+    if (match) {
+      const patch = {}
+      if (match.name !== required.name) patch.name = required.name
+      if (match.slug !== required.slug) patch.slug = required.slug
+      if (Number(match.sort_order ?? 0) !== required.sort_order) patch.sort_order = required.sort_order
+      if (match.is_active !== true) patch.is_active = true
+
+      if (Object.keys(patch).length) {
+        const res = await updateCategory(match.id, patch)
+        if (res.error) {
+          report.errors.push({ name: required.name, action: 'update', id: match.id, error: res.error })
+        } else {
+          report.updated.push({ id: match.id, name: res.data.name, slug: res.data.slug, sort_order: res.data.sort_order })
+          categories = categories.map((c) => (c.id === match.id ? res.data : c))
+        }
+      } else {
+        report.existing.push({ id: match.id, name: match.name, slug: match.slug, sort_order: match.sort_order })
+      }
+    } else {
+      const res = await createCategory({ ...required, is_active: true })
+      if (res.error) {
+        report.errors.push({ name: required.name, action: 'create', error: res.error })
+      } else {
+        report.added.push({ id: res.data.id, name: res.data.name, slug: res.data.slug, sort_order: res.data.sort_order })
+        categories = [...categories, res.data]
+      }
+    }
+  }
+
+  // keep any non-required existing categories after the required 8 without deleting them
+  const requiredSlugs = new Set(REQUIRED_MENU_CATEGORIES.map((c) => c.slug))
+  const extras = categories
+    .filter((c) => !requiredSlugs.has(c.slug) && !REQUIRED_MENU_CATEGORIES.some((r) => r.name === c.name))
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || String(a.created_at || '').localeCompare(String(b.created_at || '')))
+
+  let extraOrder = REQUIRED_MENU_CATEGORIES.length + 1
+  for (const extra of extras) {
+    if (Number(extra.sort_order ?? 0) !== extraOrder) {
+      const res = await updateCategory(extra.id, { sort_order: extraOrder })
+      if (res.error) {
+        report.errors.push({ name: extra.name, action: 'reorder-extra', id: extra.id, error: res.error })
+      } else {
+        categories = categories.map((c) => (c.id === extra.id ? res.data : c))
+      }
+    }
+    extraOrder += 1
+  }
+
+  const error = report.errors[0]?.error || null
+  return { data: { categories, report }, error, report }
 }
 
 // Products
