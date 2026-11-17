@@ -258,3 +258,12 @@
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
+
+.product-card__availability--inquiry {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.product-card__whatsapp {
+  text-decoration: none;
+}

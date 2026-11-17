@@ -1,8 +1,21 @@
 import { useEffect, useState } from 'react'
 import CategoryFilter from './CategoryFilter.jsx'
 import ProductCard from './ProductCard.jsx'
-import { fetchPublicMenu } from '../../lib/menuApi.js'
+import { OUTDOOR_GRILL_CATEGORY_ID, fetchPublicMenu } from '../../lib/menuApi.js'
 import './MenuSection.css'
+
+const INQUIRY_ONLY_SERVICES = [
+  {
+    id: 'inquiry-outdoor-external-meals',
+    name: 'تسوية وجبات خارجية حسب الكمية',
+    description: 'خدمة تسوية الوجبات الخارجية. السعر بيتحدد حسب الكمية ونوع الطلب. تواصل معنا عبر واتساب لمعرفة التفاصيل.',
+    category: OUTDOOR_GRILL_CATEGORY_ID,
+    categoryId: OUTDOOR_GRILL_CATEGORY_ID,
+    isInquiryOnly: true,
+    isAvailable: true,
+    sortOrder: 999,
+  },
+]
 
 function MenuSection({
   cartItems,
@@ -40,10 +53,15 @@ function MenuSection({
       ? activeCategory
       : 'all'
 
+  const activeInquiryServices = INQUIRY_ONLY_SERVICES.filter(
+    (s) => menuCategories.some((c) => c.id === s.categoryId),
+  )
+  const mergedProducts = [...products, ...activeInquiryServices]
+
   const displayedProducts =
     effectiveActiveCategory === 'all'
-      ? products
-      : products.filter((product) => product.category === effectiveActiveCategory)
+      ? mergedProducts
+      : mergedProducts.filter((product) => product.category === effectiveActiveCategory)
 
   return (
     <section className="menu-section" id="menu" aria-labelledby="menu-title">

@@ -9,6 +9,8 @@ import {
 import { MinusIcon, PlusIcon } from '../common/Icons.jsx'
 import './ProductCard.css'
 
+const WHATSAPP_PHONE = '201095445386'
+
 function ProductCard({
   product,
   cartItems,
@@ -17,25 +19,66 @@ function ProductCard({
   onDecreaseQuantity,
 }) {
   const [selections, setSelections] = useState({})
-  const optionGroups = getProductOptionGroups(product)
+  const isInquiryOnly = !!product.isInquiryOnly
+  const optionGroups = isInquiryOnly ? [] : getProductOptionGroups(product)
   const hasSizeGroup = optionGroups.some((group) => group.kind === 'size')
   const isAvailable = product.isAvailable !== false
-  const priceQuote = getProductPriceQuote(product, selections)
-  const canAdd = isAvailable && priceQuote.isValid
-  const cartKey = priceQuote.isValid
+  const priceQuote = isInquiryOnly
+    ? { isValid: false, price: null, selectedOptions: [], missingGroups: [], message: '' }
+    : getProductPriceQuote(product, selections)
+  const canAdd = !isInquiryOnly && isAvailable && priceQuote.isValid
+  const cartKey = !isInquiryOnly && priceQuote.isValid
     ? buildCartKey(product.id, priceQuote.selectedOptions)
     : null
   const quantity =
-    cartKey ?
-      (cartItems.find((item) => item.key === cartKey)?.quantity ?? 0)
-    : 0
+    cartKey
+      ? (cartItems.find((item) => item.key === cartKey)?.quantity ?? 0)
+      : 0
   const optionsSummary = formatOptionsSummary(priceQuote.selectedOptions)
   const itemLabel =
     optionsSummary ? `${product.name} (${optionsSummary})` : product.name
   const optionHelpId = `${product.id}-option-help`
   const missingPrompt = getOptionPricePrompt(priceQuote.missingGroups)
   const hasPriceError =
-    !priceQuote.isValid && priceQuote.missingGroups.length === 0
+    !isInquiryOnly && !priceQuote.isValid && priceQuote.missingGroups.length === 0
+
+  if (isInquiryOnly) {
+    const message = `مرحبًا، أرغب في الاستفسار عن خدمة: ${product.name}\nمن فضلك أود تحديد نوع التسوية والكمية المطلوبة.`
+    const whatsappHref = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`
+
+    return (
+      <article
+        className="product-card product-card--inquiry"
+        data-product-id={product.id}
+      >
+        <div className="product-card__body">
+          <span className="product-card__availability product-card__availability--inquiry">
+            <span className="product-card__availability-dot" aria-hidden="true" />
+            خدمة حسب الكمية
+          </span>
+          <h3 className="product-card__name">{product.name}</h3>
+          {product.description ? (
+            <p className="product-card__description">{product.description}</p>
+          ) : null}
+        </div>
+
+        <div className="product-card__footer">
+          <p className="product-card__price" aria-live="polite">
+            <span className="product-card__price-prompt">السعر بيتحدد حسب الكمية ونوع الطلب</span>
+          </p>
+          <a
+            className="product-card__add product-card__whatsapp"
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`تواصل عبر واتساب للاستفسار عن ${product.name}`}
+          >
+            <span>تواصل عبر واتساب</span>
+          </a>
+        </div>
+      </article>
+    )
+  }
 
   function handleOptionSelect(groupId, valueId) {
     setSelections((current) => ({ ...current, [groupId]: valueId }))
@@ -67,9 +110,12 @@ function ProductCard({
           className={`product-card__availability${isAvailable ? '' : ' product-card__availability--unavailable'}`}
         >
           <span className="product-card__availability-dot" aria-hidden="true" />
-          {isAvailable ? 'متوفر' : 'غير متوفر'}
+          {isAvailable ? 'متاح' : 'غير متاح'}
         </span>
         <h3 className="product-card__name">{product.name}</h3>
+        {product.description ? (
+          <p className="product-card__description">{product.description}</p>
+        ) : null}
 
         <div className="product-card__options">
           {optionGroups.map((group) => (

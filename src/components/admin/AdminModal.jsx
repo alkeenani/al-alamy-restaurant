@@ -1,6 +1,21 @@
+import { useEffect } from 'react'
 import './AdminModal.css'
 
 function AdminModal({ open, title, onClose, children, footer, size = 'md' }) {
+  useEffect(() => {
+    if (!open) return undefined
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    function onKeyDown(e) {
+      if (e.key === 'Escape') onClose?.()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = prevOverflow
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open, onClose])
+
   if (!open) return null
   return (
     <div className="admin-modal" role="dialog" aria-modal="true" aria-label={title} onMouseDown={(e)=>{ if(e.target===e.currentTarget) onClose?.() }}>

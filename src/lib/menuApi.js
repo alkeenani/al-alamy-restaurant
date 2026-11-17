@@ -217,6 +217,13 @@ export const REQUIRED_MENU_CATEGORIES = [
 ]
 
 export const SANDWICHES_CATEGORY_ID = '8682e8a5-f665-4023-a6ec-044b7f5efd8d'
+export const CREPES_CATEGORY_ID = '08a1f94f-46b1-4e83-bb00-59ffcb3287b2'
+export const PIZZA_CATEGORY_ID = 'ba23bef2-64b2-45c0-ae35-38eb3ebda846'
+export const PASTA_CATEGORY_ID = '9adea86a-7696-4c61-b261-ba97f764ba16'
+export const RIZZO_CATEGORY_ID = '308e425d-f4bb-458c-a930-426087073aec'
+export const CHICKEN_MEAT_MEALS_CATEGORY_ID = '01dfd527-389e-4ed3-980b-8d53031e6468'
+export const OUTDOOR_GRILL_CATEGORY_ID = '49b97c08-6fc2-4e81-bd8f-a11866f443e8'
+export const SWEET_BOXES_CATEGORY_ID = 'f678db0a-65e9-43d5-bfea-bd48e27e3280'
 
 export const REQUIRED_SANDWICH_PRODUCTS = [
   { name: 'بانيه', base_price: 50 },
@@ -235,6 +242,108 @@ export const REQUIRED_SANDWICH_PRODUCTS = [
   { name: 'داود باشا', base_price: 70 },
   { name: 'روزبيف', base_price: 65 },
   { name: 'كلاسيك برجر', base_price: 65 },
+]
+
+export const REQUIRED_CREPE_PRODUCTS = [
+  { name: 'بانيه', base_price: 70 },
+  { name: 'زنجر', base_price: 70 },
+  { name: 'كرنشي', base_price: 75 },
+  { name: 'فاهيتا', base_price: 80 },
+  { name: 'شيش طاووق', base_price: 80 },
+  { name: 'شاورما', base_price: 80 },
+  { name: 'كوردون بلو', base_price: 85 },
+  { name: 'ميكس فراخ', base_price: 85 },
+  { name: 'كونو دجاج', base_price: 90 },
+  { name: 'داوود باشا', base_price: 70 },
+  { name: 'كفتة', base_price: 70 },
+  { name: 'كبدة', base_price: 75 },
+  { name: 'سوسيس', base_price: 80 },
+  { name: 'سجق', base_price: 80 },
+  { name: 'روزبيف', base_price: 80 },
+  { name: 'كباب حلة', base_price: 85 },
+  { name: 'ميكس اللحوم', base_price: 90 },
+  { name: 'كونو اللحوم', base_price: 85 },
+  { name: 'كريب بطاطس', base_price: 55 },
+  { name: 'كونو العالمي', base_price: 95 },
+]
+
+export const REQUIRED_PIZZA_PRODUCTS = [
+  { name: 'مارجريتا بالجبن', base_price: 85 },
+  { name: 'بيبروني', base_price: 140 },
+  { name: 'كرنشي رانش', base_price: 110 },
+  { name: 'مكسيكان', base_price: 110 },
+  { name: 'تشيكن باربيكيو', base_price: 95 },
+  { name: 'بافلو تشيكن', base_price: 95 },
+  { name: 'مشكل دجاج', base_price: 100 },
+  { name: 'سجق', base_price: 110 },
+  { name: 'مشكل لحوم', base_price: 115 },
+]
+
+export const REQUIRED_PASTA_PRODUCTS = [
+  { name: 'مكرونة بشاميل', base_price: 60 },
+  { name: 'مكرونة نجرسكو', base_price: 75 },
+  { name: 'مكرونة بانيه / زنجر', base_price: 70 },
+  { name: 'مكرونة كرنشي / فاهيتا', base_price: 75 },
+  { name: 'مكرونة شيش / شاورما', base_price: 75 },
+  { name: 'مكرونة كوردون بلو', base_price: 80 },
+  { name: 'مكرونة ميكس فراخ', base_price: 85 },
+  { name: 'مكرونة ألفريدو', base_price: 80 },
+  { name: 'مكرونة بالكبدة', base_price: 60 },
+  { name: 'مكرونة سجق', base_price: 65 },
+  { name: 'مكرونة بالكفتة', base_price: 65 },
+  { name: 'مكرونة سوسيس', base_price: 60 },
+  { name: 'مكرونة روزبيف', base_price: 75 },
+  { name: 'مكرونة كباب حلة', base_price: 75 },
+  { name: 'مكرونة داود باشا', base_price: 70 },
+  { name: 'مكرونة ميكس اللحوم', base_price: 85 },
+]
+
+export const REQUIRED_RIZZO_PRODUCTS = [
+  { name: 'طبق رز سادة', base_price: 30 },
+  { name: 'ريزو فراخ / بانيه', base_price: 65 },
+  { name: 'ريزو كرنشي / زنجر', base_price: 70 },
+  { name: 'ريزو شاورما / فاهيتا', base_price: 75 },
+  { name: 'ريزو شيش طاووق', base_price: 75 },
+  { name: 'ريزو كوردون بلو', base_price: 80 },
+  { name: 'ريزو كفتة', base_price: 65 },
+  { name: 'ريزو سوسيس', base_price: 65 },
+  { name: 'ريزو كباب حلة', base_price: 75 },
+  { name: 'ريزو سجق', base_price: 70 },
+  { name: 'ريزو كبدة', base_price: 70 },
+  { name: 'ريزو داود باشا', base_price: 75 },
+  { name: 'ريزو روزبيف', base_price: 75 },
+]
+
+export const REQUIRED_CHICKEN_MEAT_MEAL_PRODUCTS = [
+  {
+    name: 'فراخ بالبطاطس (ربع / نصف)',
+    base_price: 75,
+    options: [{ name: 'الحجم', required: true, values: [{ name: 'ربع', price: 75 }, { name: 'نصف', price: 140 }] }],
+  },
+  {
+    name: 'فراخ مشوية (ربع / نصف)',
+    base_price: 80,
+    options: [{ name: 'الحجم', required: true, values: [{ name: 'ربع', price: 80 }, { name: 'نصف', price: 150 }] }],
+  },
+  { name: 'وجبة شيش طاووق', base_price: 120 },
+  { name: 'وجبة كريسبي / كوردون', base_price: 125 },
+  { name: 'وجبات لحوم (كفتة / سجق / كبدة)', base_price: 110 },
+  { name: 'كباب حلة / داود باشا', base_price: 125 },
+  { name: 'ميكس العالمي', base_price: 140 },
+]
+
+export const REQUIRED_OUTDOOR_GRILL_PRODUCTS = [
+  { name: 'شوي كيلو كفتة', base_price: 70 },
+  { name: 'شوي فرخة', base_price: 60 },
+  { name: 'تسوية بطة', base_price: 90 },
+  { name: 'تسوية رومي', base_price: 180 },
+]
+
+export const REQUIRED_SWEET_BOX_PRODUCTS = [
+  { name: 'بوكس الشعب', base_price: 190, description: '1 كبدة + 1 كفتة + 1 سجق + 1 حلو + بطاطس' },
+  { name: 'بوكس الصحاب', base_price: 390, description: '3 روزبيف + 3 سجق كباب حلة + 3 شيش طاووق + 3 حلو + 3 بانيه + لتر صودا' },
+  { name: 'بوكس التوينز', base_price: 290, description: '2 كرنشي + 2 كوردون بلو + 2 كفتة + 2 حلو' },
+  { name: 'بوكس ميكسي', base_price: 250, description: 'ميكس حواوشي + كرنشي رانش + كفتة فاهيتا + بطاطس + كولا' },
 ]
 
 export async function ensureRequiredSandwichProducts() {
@@ -286,6 +395,258 @@ export async function ensureRequiredSandwichProducts() {
 
   const error = report.errors[0]?.error || null
   return { data: { report }, error, report }
+}
+
+export async function ensureRequiredCrepeProducts() {
+  const { user, error: authError } = await verifyAdminSession()
+  if (authError || !user) {
+    return { data: null, error: authError || { message: 'Admin authorization required for product sync.', code: 'NOT_ADMIN' }, report: null }
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('products')
+    .select('id,name,base_price,category_id,sort_order,is_available')
+    .eq('category_id', CREPES_CATEGORY_ID)
+
+  if (fetchError) return { data: null, error: fetchError, report: null }
+
+  const existingByName = new Map((existing || []).map((p) => [p.name, p]))
+  const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
+  const report = { existing: [], added: [], errors: [] }
+  const toInsert = []
+
+  REQUIRED_CREPE_PRODUCTS.forEach((req, idx) => {
+    const found = existingByName.get(req.name)
+    if (found) {
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    } else {
+      toInsert.push({
+        name: req.name,
+        base_price: req.base_price,
+        category_id: CREPES_CATEGORY_ID,
+        is_available: true,
+        description: null,
+        sort_order: maxSort + 1 + idx,
+      })
+    }
+  })
+
+  if (toInsert.length) {
+    const { data: inserted, error: insertError } = await supabase
+      .from('products')
+      .insert(toInsert)
+      .select('id,name,base_price,category_id,sort_order,is_available')
+
+    if (insertError) {
+      report.errors.push({ action: 'insert', error: insertError })
+      return { data: { report }, error: insertError, report }
+    }
+    report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  const error = report.errors[0]?.error || null
+  return { data: { report }, error, report }
+}
+
+export async function ensureRequiredPizzaProducts() {
+  const { user, error: authError } = await verifyAdminSession()
+  if (authError || !user) {
+    return { data: null, error: authError || { message: 'Admin authorization required for product sync.', code: 'NOT_ADMIN' }, report: null }
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('products')
+    .select('id,name,base_price,category_id,sort_order,is_available')
+    .eq('category_id', PIZZA_CATEGORY_ID)
+
+  if (fetchError) return { data: null, error: fetchError, report: null }
+
+  const existingByName = new Map((existing || []).map((p) => [p.name, p]))
+  const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
+  const report = { existing: [], added: [], errors: [] }
+  const toInsert = []
+
+  REQUIRED_PIZZA_PRODUCTS.forEach((req, idx) => {
+    const found = existingByName.get(req.name)
+    if (found) {
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    } else {
+      toInsert.push({
+        name: req.name,
+        base_price: req.base_price,
+        category_id: PIZZA_CATEGORY_ID,
+        is_available: true,
+        description: null,
+        sort_order: maxSort + 1 + idx,
+      })
+    }
+  })
+
+  if (toInsert.length) {
+    const { data: inserted, error: insertError } = await supabase
+      .from('products')
+      .insert(toInsert)
+      .select('id,name,base_price,category_id,sort_order,is_available')
+
+    if (insertError) {
+      report.errors.push({ action: 'insert', error: insertError })
+      return { data: { report }, error: insertError, report }
+    }
+    report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  const error = report.errors[0]?.error || null
+  return { data: { report }, error, report }
+}
+
+async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
+  const { user, error: authError } = await verifyAdminSession()
+  if (authError || !user) {
+    return { data: null, error: authError || { message: 'Admin authorization required for product sync.', code: 'NOT_ADMIN' }, report: null }
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('products')
+    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .eq('category_id', categoryId)
+
+  if (fetchError) return { data: null, error: fetchError, report: null }
+
+  const existingByName = new Map((existing || []).map((p) => [p.name, p]))
+  const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
+  const report = { existing: [], added: [], errors: [] }
+  const toInsert = []
+
+  requiredProducts.forEach((req, idx) => {
+    const found = existingByName.get(req.name)
+    if (found) {
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    } else {
+      toInsert.push({
+        name: req.name,
+        base_price: req.base_price,
+        category_id: categoryId,
+        is_available: true,
+        description: req.description ?? null,
+        sort_order: maxSort + 1 + idx,
+      })
+    }
+  })
+
+  if (toInsert.length) {
+    const { data: inserted, error: insertError } = await supabase
+      .from('products')
+      .insert(toInsert)
+      .select('id,name,base_price,category_id,sort_order,is_available,description')
+
+    if (insertError) {
+      report.errors.push({ action: 'insert', error: insertError })
+      return { data: { report }, error: insertError, report }
+    }
+    report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  const error = report.errors[0]?.error || null
+  return { data: { report }, error, report }
+}
+
+export async function ensureRequiredPastaProducts() {
+  return ensureSimpleRequiredProducts(PASTA_CATEGORY_ID, REQUIRED_PASTA_PRODUCTS)
+}
+
+export async function ensureRequiredRizzoProducts() {
+  return ensureSimpleRequiredProducts(RIZZO_CATEGORY_ID, REQUIRED_RIZZO_PRODUCTS)
+}
+
+export async function ensureRequiredChickenMeatMealProducts() {
+  const { user, error: authError } = await verifyAdminSession()
+  if (authError || !user) {
+    return { data: null, error: authError || { message: 'Admin authorization required for product sync.', code: 'NOT_ADMIN' }, report: null }
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('products')
+    .select('id,name,base_price,category_id,sort_order,is_available')
+    .eq('category_id', CHICKEN_MEAT_MEALS_CATEGORY_ID)
+
+  if (fetchError) return { data: null, error: fetchError, report: null }
+
+  const existingByName = new Map((existing || []).map((p) => [p.name, p]))
+  const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
+  const report = { existing: [], added: [], errors: [] }
+
+  let sortCursor = maxSort + 1
+  for (const req of REQUIRED_CHICKEN_MEAT_MEAL_PRODUCTS) {
+    const found = existingByName.get(req.name)
+    if (found) {
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+      continue
+    }
+
+    const prodRes = await supabase.from('products').insert({
+      name: req.name,
+      base_price: req.base_price,
+      category_id: CHICKEN_MEAT_MEALS_CATEGORY_ID,
+      is_available: true,
+      description: req.description ?? null,
+      sort_order: sortCursor++,
+    }).select('id,name,base_price,category_id,sort_order,is_available').single()
+
+    if (prodRes.error) {
+      report.errors.push({ name: req.name, action: 'insert', error: prodRes.error })
+      return { data: { report }, error: prodRes.error, report }
+    }
+
+    if (req.options?.length) {
+      const optRes = await replaceProductOptions(prodRes.data.id, req.options.map((g, gi) => ({
+        name: g.name,
+        is_required: g.required !== false,
+        min_select: 1,
+        max_select: 1,
+        sort_order: gi,
+        values: (g.values || []).map((v, vi) => ({
+          name: v.name,
+          price_delta: 0,
+          is_available: true,
+          sort_order: vi,
+        })),
+      })))
+      if (optRes.error) {
+        report.errors.push({ name: req.name, action: 'options', error: optRes.error })
+        return { data: { report }, error: optRes.error, report }
+      }
+      const savedGroups = optRes.data || []
+      const comboRows = []
+      for (const gReq of req.options) {
+        const gSaved = savedGroups.find((g) => g.name === gReq.name)
+        if (!gSaved) continue
+        for (const vReq of (gReq.values || [])) {
+          const vSaved = (gSaved.values || []).find((v) => v.name === vReq.name)
+          if (vSaved) comboRows.push({ valueIds: [vSaved.id], price: vReq.price })
+        }
+      }
+      if (comboRows.length) {
+        const cRes = await saveProductCombinations(prodRes.data.id, savedGroups, comboRows)
+        if (cRes.error) {
+          report.errors.push({ name: req.name, action: 'combinations', error: cRes.error })
+          return { data: { report }, error: cRes.error, report }
+        }
+      }
+    }
+
+    report.added.push({ id: prodRes.data.id, name: prodRes.data.name, base_price: Number(prodRes.data.base_price), category_id: prodRes.data.category_id })
+  }
+
+  const error = report.errors[0]?.error || null
+  return { data: { report }, error, report }
+}
+
+export async function ensureRequiredOutdoorGrillProducts() {
+  return ensureSimpleRequiredProducts(OUTDOOR_GRILL_CATEGORY_ID, REQUIRED_OUTDOOR_GRILL_PRODUCTS)
+}
+
+export async function ensureRequiredSweetBoxProducts() {
+  return ensureSimpleRequiredProducts(SWEET_BOXES_CATEGORY_ID, REQUIRED_SWEET_BOX_PRODUCTS)
 }
 
 export async function ensureRequiredMenuCategories(existingCategories) {

@@ -290,12 +290,12 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
     <div>
       <div className="admin-toolbar">
         <button type="button" className="admin-btn admin-btn--primary" onClick={openCreate} disabled={!categories.length}>إضافة منتج</button>
-        <input className="admin-input" style={{maxWidth:'18rem'}} placeholder="بحث باسم المنتج…" value={search} onChange={e=>setSearch(e.target.value)} />
-        <select className="admin-select" style={{maxWidth:'14rem'}} value={filterCategory} onChange={e=>setFilterCategory(e.target.value)}>
+        <input className="admin-input admin-toolbar__control" placeholder="بحث باسم المنتج…" value={search} onChange={e=>setSearch(e.target.value)} />
+        <select className="admin-select admin-toolbar__control" value={filterCategory} onChange={e=>setFilterCategory(e.target.value)}>
           <option value="all">كل الأقسام</option>
           {categories.map(c => <option key={c.id} value={c.id}>{c.name}{c.is_active ? '' : ' (غير نشط)'}</option>)}
         </select>
-        <select className="admin-select" style={{maxWidth:'12rem'}} value={filterAvail} onChange={e=>setFilterAvail(e.target.value)}>
+        <select className="admin-select admin-toolbar__control" value={filterAvail} onChange={e=>setFilterAvail(e.target.value)}>
           <option value="all">الكل</option>
           <option value="available">متاح</option>
           <option value="unavailable">غير متاح</option>
@@ -306,42 +306,65 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
       {!filtered.length ? (
         <div className="admin-empty">لا توجد منتجات مطابقة.</div>
       ) : (
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>المنتج</th>
-                <th>القسم</th>
-                <th>السعر الأساسي</th>
-                <th>الترتيب</th>
-                <th>الحالة</th>
-                <th>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(p => (
-                <tr key={p.id}>
-                  <td>
-                    <div style={{fontWeight:700}}>{p.name}</div>
-                    {p.description ? <div className="admin-help">{p.description}</div> : null}
-                  </td>
-                  <td>{categoryMap.get(p.category_id)?.name || '—'}</td>
-                  <td>{Number(p.base_price)} ج.م</td>
-                  <td>{p.sort_order ?? 0}</td>
-                  <td><span className={`admin-badge ${p.is_available ? '' : 'admin-badge--muted'}`}>{p.is_available ? 'متاح' : 'غير متاح'}</span></td>
-                  <td>
-                    <div className="admin-row-actions">
-                      <button type="button" className="admin-btn" onClick={()=>openEdit(p)}>تعديل</button>
-                      <button type="button" className="admin-btn admin-btn--danger" onClick={()=>setConfirmTarget(p)}>حذف</button>
-                    </div>
-                  </td>
+        <>
+          <div className="admin-table-wrap admin-table-wrap--responsive">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>المنتج</th>
+                  <th>القسم</th>
+                  <th>السعر الأساسي</th>
+                  <th>الترتيب</th>
+                  <th>الحالة</th>
+                  <th>إجراءات</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map(p => (
+                  <tr key={p.id}>
+                    <td>
+                      <div style={{fontWeight:700}}>{p.name}</div>
+                      {p.description ? <div className="admin-help">{p.description}</div> : null}
+                    </td>
+                    <td>{categoryMap.get(p.category_id)?.name || '-'}</td>
+                    <td>{Number(p.base_price)} ج.م</td>
+                    <td>{p.sort_order ?? 0}</td>
+                    <td><span className={`admin-badge ${p.is_available ? '' : 'admin-badge--muted'}`}>{p.is_available ? 'متاح' : 'غير متاح'}</span></td>
+                    <td>
+                      <div className="admin-row-actions">
+                        <button type="button" className="admin-btn" onClick={()=>openEdit(p)}>تعديل</button>
+                        <button type="button" className="admin-btn admin-btn--danger" onClick={()=>setConfirmTarget(p)}>حذف</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="admin-list-cards">
+            {filtered.map(p => (
+              <article key={p.id} className="admin-list-card">
+                <div className="admin-list-card__head">
+                  <div>
+                    <div className="admin-list-card__title">{p.name}</div>
+                    {p.description ? <div className="admin-help" style={{marginTop:'.25rem'}}>{p.description}</div> : null}
+                  </div>
+                  <span className={`admin-badge ${p.is_available ? '' : 'admin-badge--muted'}`}>{p.is_available ? 'متاح' : 'غير متاح'}</span>
+                </div>
+                <div className="admin-list-card__meta">
+                  <div className="admin-list-card__meta-row"><span>القسم</span><span>{categoryMap.get(p.category_id)?.name || '-'}</span></div>
+                  <div className="admin-list-card__meta-row"><span>السعر الأساسي</span><span>{Number(p.base_price)} ج.م</span></div>
+                  <div className="admin-list-card__meta-row"><span>الترتيب</span><span>{p.sort_order ?? 0}</span></div>
+                </div>
+                <div className="admin-list-card__actions">
+                  <button type="button" className="admin-btn" onClick={()=>openEdit(p)}>تعديل</button>
+                  <button type="button" className="admin-btn admin-btn--danger" onClick={()=>setConfirmTarget(p)}>حذف</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
       )}
-
       <AdminModal
         open={modalOpen}
         title={editing ? 'تعديل منتج' : 'إضافة منتج'}
@@ -515,3 +538,5 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
     </div>
   )
 }
+
+

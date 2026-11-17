@@ -104,41 +104,62 @@ export default function CategoriesManager({ data, loading, refresh, showToast })
       {!rows.length ? (
         <div className="admin-empty">لا توجد أقسام بعد. ابدأ بإضافة قسم جديد.</div>
       ) : (
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>الاسم</th>
-                <th>المعرّف (slug)</th>
-                <th>الترتيب</th>
-                <th>الحالة</th>
-                <th>المنتجات</th>
-                <th>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(cat => (
-                <tr key={cat.id}>
-                  <td>{cat.name}</td>
-                  <td dir="ltr" style={{textAlign:'left'}}>{cat.slug}</td>
-                  <td>{cat.sort_order ?? 0}</td>
-                  <td>
-                    <span className={`admin-badge ${cat.is_active ? '' : 'admin-badge--muted'}`}>
-                      {cat.is_active ? 'نشط' : 'غير نشط'}
-                    </span>
-                  </td>
-                  <td>{productCountByCategory.get(cat.id) || 0}</td>
-                  <td>
-                    <div className="admin-row-actions">
-                      <button type="button" className="admin-btn" onClick={()=>openEdit(cat)}>تعديل</button>
-                      <button type="button" className="admin-btn admin-btn--danger" onClick={()=>setConfirmTarget(cat)}>حذف</button>
-                    </div>
-                  </td>
+        <>
+          <div className="admin-table-wrap admin-table-wrap--responsive">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>المعرّف (slug)</th>
+                  <th>الترتيب</th>
+                  <th>الحالة</th>
+                  <th>المنتجات</th>
+                  <th>إجراءات</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {rows.map(cat => (
+                  <tr key={cat.id}>
+                    <td>{cat.name}</td>
+                    <td dir="ltr" style={{textAlign:'left'}}>{cat.slug}</td>
+                    <td>{cat.sort_order ?? 0}</td>
+                    <td>
+                      <span className={`admin-badge ${cat.is_active ? '' : 'admin-badge--muted'}`}>
+                        {cat.is_active ? 'نشط' : 'غير نشط'}
+                      </span>
+                    </td>
+                    <td>{productCountByCategory.get(cat.id) || 0}</td>
+                    <td>
+                      <div className="admin-row-actions">
+                        <button type="button" className="admin-btn" onClick={()=>openEdit(cat)}>تعديل</button>
+                        <button type="button" className="admin-btn admin-btn--danger" onClick={()=>setConfirmTarget(cat)}>حذف</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="admin-list-cards">
+            {rows.map(cat => (
+              <article key={cat.id} className="admin-list-card">
+                <div className="admin-list-card__head">
+                  <div className="admin-list-card__title">{cat.name}</div>
+                  <span className={`admin-badge ${cat.is_active ? '' : 'admin-badge--muted'}`}>{cat.is_active ? 'نشط' : 'غير نشط'}</span>
+                </div>
+                <div className="admin-list-card__meta">
+                  <div className="admin-list-card__meta-row"><span>المعرّف (slug)</span><span dir="ltr">{cat.slug}</span></div>
+                  <div className="admin-list-card__meta-row"><span>الترتيب</span><span>{cat.sort_order ?? 0}</span></div>
+                  <div className="admin-list-card__meta-row"><span>المنتجات</span><span>{productCountByCategory.get(cat.id) || 0}</span></div>
+                </div>
+                <div className="admin-list-card__actions">
+                  <button type="button" className="admin-btn" onClick={()=>openEdit(cat)}>تعديل</button>
+                  <button type="button" className="admin-btn admin-btn--danger" onClick={()=>setConfirmTarget(cat)}>حذف</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
       )}
 
       <AdminModal
