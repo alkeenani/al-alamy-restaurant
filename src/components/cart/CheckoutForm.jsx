@@ -107,13 +107,14 @@ function CheckoutForm({ items, total, showToast }) {
       onSubmit={handleSubmit}
     >
       <div className="checkout-form__heading">
-        <p className="checkout-form__eyebrow">الخطوة الأخيرة</p>
+        <p className="checkout-form__eyebrow">بيانات التوصيل</p>
         <h3 className="checkout-form__title" id="checkout-title">
-          بيانات العميل
+          إتمام الطلب
         </h3>
         <p className="checkout-form__description">
-          أدخل بياناتك للتواصل، ثم أكمل إرسال الطلب عبر واتساب.
+          أدخل بياناتك للتواصل ثم أرسل الطلب مباشرة عبر واتساب.
         </p>
+        <p className="checkout-form__saved-note">بياناتك محفوظة على جهازك لتسهيل طلبك القادم.</p>
       </div>
 
       <div className="checkout-form__fields">
