@@ -1,4 +1,5 @@
 import { formatPrice } from './formatPrice.js'
+import { computeCartSummary } from './cart.js'
 
 export function buildWhatsAppUrl(phone, message = '') {
   const baseUrl = `https://wa.me/${phone}`
@@ -10,25 +11,28 @@ export function buildWhatsAppUrl(phone, message = '') {
   return `${baseUrl}?text=${encodeURIComponent(message)}`
 }
 
-export function buildOrderMessage({ customer, items, total }) {
+export function buildOrderMessage({ customer, items }) {
+  const summary = computeCartSummary(items)
+  const safeCustomer = customer || {}
   const lines = [
     'السلام عليكم، أريد طلب من مطعم العالمي.',
     '',
     'بيانات العميل:',
-    `الاسم: ${customer.fullName.trim()}`,
-    `رقم الهاتف: ${customer.primaryPhone.trim()}`,
+    `الاسم: ${String(safeCustomer.fullName || '').trim()}`,
+    `رقم الهاتف: ${String(safeCustomer.primaryPhone || '').trim()}`,
   ]
 
-  if (customer.secondaryPhone.trim()) {
-    lines.push(`رقم الهاتف البديل: ${customer.secondaryPhone.trim()}`)
+  const secondaryPhone = String(safeCustomer.secondaryPhone || '').trim()
+  if (secondaryPhone) {
+    lines.push(`رقم الهاتف البديل: ${secondaryPhone}`)
   }
 
-  lines.push(`العنوان: ${customer.address.trim()}`, '', 'تفاصيل الطلب:', '')
+  lines.push(`العنوان: ${String(safeCustomer.address || '').trim()}`, '', 'تفاصيل الطلب:', '')
 
-  items.forEach((item, index) => {
+  summary.items.forEach((item, index) => {
     lines.push(`${index + 1}. ${item.name}`)
 
-    item.options.forEach((option) => {
+    ;(item.options || []).forEach((option) => {
       lines.push(`   ${option.groupLabel}: ${option.label}`)
     })
 
@@ -40,11 +44,16 @@ export function buildOrderMessage({ customer, items, total }) {
     )
   })
 
-  lines.push(`الإجمالي النهائي: ${formatPrice(total)}`)
+  lines.push(`الإجمالي النهائي: ${formatPrice(summary.total)}`)
 
-  if (customer.notes.trim()) {
-    lines.push('', `ملاحظات: ${customer.notes.trim()}`)
+  const notes = String(safeCustomer.notes || '').trim()
+  if (notes) {
+    lines.push('', `ملاحظات: ${notes}`)
   }
 
-  return lines.join('\n')
+  return { message: lines.join('\n'), summary }
+}
+
+export function buildOrderMessageText(args) {
+  return buildOrderMessage(args).message
 }

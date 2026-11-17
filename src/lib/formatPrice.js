@@ -1,3 +1,5 @@
+import { formatPrice as formatMoneyPrice } from './money.js'
+
 export function formatPrice(value) {
-  return `${Number(value).toLocaleString('en-EG')} ج.م`
+  return formatMoneyPrice(value)
 }

@@ -8,10 +8,9 @@ import MenuSection from '../components/menu/MenuSection.jsx'
 import { useToasts } from '../hooks/useToasts.js'
 import {
   addCartLine,
+  computeCartSummary,
   createCartLine,
-  getCartCount,
   getCartLineLabel,
-  getCartTotal,
   updateCartLineQuantity,
 } from '../lib/cart.js'
 import { formatOptionsSummary } from '../lib/productOptions.js'
@@ -22,8 +21,9 @@ function Home() {
   const cartTriggerRef = useRef(null)
   const { toasts, showToast } = useToasts()
 
-  const cartCount = getCartCount(cartItems)
-  const cartTotal = getCartTotal(cartItems)
+  const cartSummary = computeCartSummary(cartItems)
+  const cartCount = cartSummary.itemCount
+  const cartTotal = cartSummary.total
 
   function handleAddToCart(product, priceQuote) {
     if (!priceQuote.isValid) return
@@ -33,6 +33,7 @@ function Home() {
       priceQuote,
       product.categoryLabel || '',
     )
+    if (!line) return
 
     setCartItems((items) => addCartLine(items, line))
 
@@ -44,7 +45,7 @@ function Home() {
   }
 
   function handleIncreaseQuantity(key) {
-    const item = cartItems.find((cartItem) => cartItem.key === key)
+    const item = cartSummary.items.find((cartItem) => cartItem.key === key)
 
     if (!item) return
 
@@ -55,7 +56,7 @@ function Home() {
   }
 
   function handleDecreaseQuantity(key) {
-    const item = cartItems.find((cartItem) => cartItem.key === key)
+    const item = cartSummary.items.find((cartItem) => cartItem.key === key)
 
     if (!item) return
 
@@ -63,7 +64,7 @@ function Home() {
     setCartItems((items) => updateCartLineQuantity(items, key, nextQuantity))
 
     if (nextQuantity === 0) {
-      showToast(`تم إزالة ${getCartLineLabel(item)} من السلة.`, 'info')
+      showToast(`تم حذف ${getCartLineLabel(item)} من السلة.`, 'info')
       return
     }
 
@@ -71,16 +72,16 @@ function Home() {
   }
 
   function handleRemoveItem(key) {
-    const item = cartItems.find((cartItem) => cartItem.key === key)
+    const item = cartSummary.items.find((cartItem) => cartItem.key === key)
 
     if (!item) return
 
     setCartItems((items) => items.filter((cartItem) => cartItem.key !== key))
-    showToast(`تم إزالة ${getCartLineLabel(item)} من السلة.`, 'success')
+    showToast(`تم حذف ${getCartLineLabel(item)} من السلة.`, 'success')
   }
 
   function handleClearCart() {
-    if (cartItems.length === 0) return
+    if (cartSummary.items.length === 0) return
 
     setCartItems([])
     showToast('تم تفريغ السلة.', 'info')
@@ -98,7 +99,7 @@ function Home() {
   return (
     <>
       <a className="skip-link" href="#menu">
-        تخطَّ إلى المنيو
+        تخطّي إلى المنيو
       </a>
       <Header
         cartCount={cartCount}
@@ -109,7 +110,7 @@ function Home() {
       <main>
         <Hero />
         <MenuSection
-          cartItems={cartItems}
+          cartItems={cartSummary.items}
           onAddToCart={handleAddToCart}
           onIncreaseQuantity={handleIncreaseQuantity}
           onDecreaseQuantity={handleDecreaseQuantity}
@@ -119,7 +120,7 @@ function Home() {
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
-        items={cartItems}
+        items={cartSummary.items}
         itemCount={cartCount}
         total={cartTotal}
         onIncrease={handleIncreaseQuantity}

@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { restaurantInfo } from '../../data/siteInfo.js'
 import {
-  buildOrderMessage,
+  buildOrderMessageText,
   buildWhatsAppUrl,
 } from '../../lib/whatsapp.js'
 import { WhatsAppIcon } from '../common/Icons.jsx'
 import './CheckoutForm.css'
+
+const CUSTOMER_INFO_STORAGE_KEY = 'al-alamy-customer-info'
+const PERSISTED_CUSTOMER_FIELDS = ['fullName', 'primaryPhone', 'secondaryPhone', 'address']
 
 const initialForm = {
   fullName: '',
@@ -17,6 +20,37 @@ const initialForm = {
 
 const phonePattern = /^01\d{9}$/
 
+function readSavedCustomerInfo() {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return null
+    const raw = window.localStorage.getItem(CUSTOMER_INFO_STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null
+    const safe = {}
+    for (const field of PERSISTED_CUSTOMER_FIELDS) {
+      const value = parsed[field]
+      safe[field] = typeof value === 'string' ? value : ''
+    }
+    return safe
+  } catch {
+    return null
+  }
+}
+
+function persistCustomerInfo(form) {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return
+    const data = {}
+    for (const field of PERSISTED_CUSTOMER_FIELDS) {
+      data[field] = typeof form[field] === 'string' ? form[field] : ''
+    }
+    window.localStorage.setItem(CUSTOMER_INFO_STORAGE_KEY, JSON.stringify(data))
+  } catch {
+    // ignore storage errors (private mode/quota) without breaking checkout
+  }
+}
+
 function validate(form) {
   const errors = {}
 
@@ -27,40 +61,44 @@ function validate(form) {
   if (!form.primaryPhone.trim()) {
     errors.primaryPhone = 'رقم الموبايل الأساسي مطلوب.'
   } else if (!phonePattern.test(form.primaryPhone.trim())) {
-    errors.primaryPhone =
-      'أدخل رقم موبايل صحيح مكوّن من 11 رقماً يبدأ بـ 01.'
+    errors.primaryPhone = 'أدخل رقم موبايل مصري صحيح من 11 رقمًا يبدأ بـ 01.'
   }
 
   if (
     form.secondaryPhone.trim() &&
     !phonePattern.test(form.secondaryPhone.trim())
   ) {
-    errors.secondaryPhone =
-      'أدخل رقم موبايل بديل صحيح مكوّن من 11 رقماً يبدأ بـ 01.'
+    errors.secondaryPhone = 'أدخل رقم موبايل مصري صحيح من 11 رقمًا يبدأ بـ 01.'
   }
 
   if (form.address.trim().length < 10) {
-    errors.address = 'يرجى إدخال العنوان بالتفصيل (10 أحرف على الأقل).'
+    errors.address = 'يرجى كتابة العنوان بالتفصيل (10 أحرف على الأقل).'
   }
 
   return errors
 }
 
-function CheckoutForm({ items, total, showToast }) {
-  const [form, setForm] = useState(initialForm)
+function CheckoutForm({ items, showToast }) {
+  const [form, setForm] = useState(() => ({ ...initialForm, ...(readSavedCustomerInfo() || {}) }))
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('')
 
   function handleChange(event) {
     const { name, value } = event.target
 
-    setForm((current) => ({ ...current, [name]: value }))
+    setForm((current) => {
+      const next = { ...current, [name]: value }
+      if (PERSISTED_CUSTOMER_FIELDS.includes(name)) {
+        persistCustomerInfo(next)
+      }
+      return next
+    })
 
     if (errors[name]) {
       setErrors((current) => {
-        const next = { ...current }
-        delete next[name]
-        return next
+        const nextErrors = { ...current }
+        delete nextErrors[name]
+        return nextErrors
       })
     }
 
@@ -83,7 +121,7 @@ function CheckoutForm({ items, total, showToast }) {
       return
     }
 
-    const orderMessage = buildOrderMessage({ customer: form, items, total })
+    const orderMessage = buildOrderMessageText({ customer: form, items })
     const whatsappUrl = buildWhatsAppUrl(
       restaurantInfo.whatsappInternational,
       orderMessage,
@@ -91,10 +129,10 @@ function CheckoutForm({ items, total, showToast }) {
 
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
     setStatus(
-      'تم تجهيز طلبك، برجاء إكمال الإرسال عبر واتساب. لم يتم تأكيد الطلب بعد.',
+      'تم تجهيز تفاصيل الطلب وفتح واتساب مع الرسالة. إذا لم يتم الإرسال تلقائيًا اضغط إرسال.',
     )
     showToast(
-      'تم تجهيز طلبك، برجاء إكمال الإرسال عبر واتساب.',
+      'تم تجهيز تفاصيل الطلب وفتح واتساب مع الرسالة.',
       'success',
     )
   }
@@ -133,7 +171,7 @@ function CheckoutForm({ items, total, showToast }) {
             name="fullName"
             type="text"
             autoComplete="name"
-            placeholder="أدخل اسمك بالكامل"
+            placeholder="اكتب اسمك بالكامل"
             value={form.fullName}
             onChange={handleChange}
             required
@@ -233,7 +271,7 @@ function CheckoutForm({ items, total, showToast }) {
             id="address"
             name="address"
             autoComplete="street-address"
-            placeholder="أدخل عنوانك بالتفصيل"
+            placeholder="اكتب العنوان بالتفصيل"
             rows="3"
             value={form.address}
             onChange={handleChange}
@@ -256,7 +294,7 @@ function CheckoutForm({ items, total, showToast }) {
           <textarea
             id="notes"
             name="notes"
-            placeholder="أي تفاصيل إضافية عن الطلب"
+            placeholder="أي تعليمات خاصة أو ملاحظات"
             rows="2"
             value={form.notes}
             onChange={handleChange}
@@ -266,11 +304,10 @@ function CheckoutForm({ items, total, showToast }) {
 
       <button type="submit" className="checkout-form__submit">
         <WhatsAppIcon size={18} />
-        <span>تأكيد الطلب</span>
+        <span>إرسال الطلب</span>
       </button>
       <p className="checkout-form__note">
-        سيتم فتح واتساب بعد التحقق من البيانات لإرسال الطلب. لا يُعد الطلب
-        مؤكداً قبل إتمام الإرسال من واتساب.
+        سيتم فتح واتساب مع رسالة جاهزة بالتفاصيل. إذا لم يفتح تلقائيًا راجع إعدادات المتصفح.
       </p>
       {status ? (
         <p className="checkout-form__status" role="status">

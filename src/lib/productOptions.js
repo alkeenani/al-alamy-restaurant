@@ -109,7 +109,7 @@ export function getProductPriceQuote(product, selections = {}) {
   if (isFinitePrice(configuredCombinationPrice)) {
     return {
       isValid: true,
-      price: configuredCombinationPrice,
+      price: Math.round(configuredCombinationPrice * 100) / 100,
       selectedOptions,
       missingGroups: [],
       message: '',
@@ -192,7 +192,7 @@ export function getProductPriceQuote(product, selections = {}) {
     }
   }
 
-  const price = basePrice + adjustment
+  const price = Math.round((basePrice + adjustment) * 100) / 100
 
   if (!isFinitePrice(price)) {
     return {
