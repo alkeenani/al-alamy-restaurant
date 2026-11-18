@@ -23,7 +23,7 @@ function MenuSection({
   onIncreaseQuantity,
   onDecreaseQuantity,
 }) {
-  const [activeCategory, setActiveCategory] = useState('all')
+  const [activeCategory, setActiveCategory] = useState('')
   const [menuCategories, setMenuCategories] = useState([])
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -49,19 +49,18 @@ function MenuSection({
   }, [])
 
   const effectiveActiveCategory =
-    activeCategory !== 'all' && menuCategories.some((c) => c.id === activeCategory)
+    menuCategories.some((c) => c.id === activeCategory)
       ? activeCategory
-      : 'all'
+      : (menuCategories[0]?.id || '')
 
   const activeInquiryServices = INQUIRY_ONLY_SERVICES.filter(
     (s) => menuCategories.some((c) => c.id === s.categoryId),
   )
   const mergedProducts = [...products, ...activeInquiryServices]
 
-  const displayedProducts =
-    effectiveActiveCategory === 'all'
-      ? mergedProducts
-      : mergedProducts.filter((product) => product.category === effectiveActiveCategory)
+  const displayedProducts = effectiveActiveCategory
+    ? mergedProducts.filter((product) => product.category === effectiveActiveCategory)
+    : []
 
   return (
     <section className="menu-section" id="menu" aria-labelledby="menu-title">
