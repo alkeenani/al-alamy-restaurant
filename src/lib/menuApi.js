@@ -226,12 +226,13 @@ export const OUTDOOR_GRILL_CATEGORY_ID = '49b97c08-6fc2-4e81-bd8f-a11866f443e8'
 export const SWEET_BOXES_CATEGORY_ID = 'f678db0a-65e9-43d5-bfea-bd48e27e3280'
 
 export const REQUIRED_SANDWICH_PRODUCTS = [
-  { name: 'بانيه', base_price: 55 },
+  { name: 'بانيه', base_price: 40 },
   { name: 'زنجر', base_price: 60 },
   { name: 'كرنشي', base_price: 60 },
   { name: 'فاهيتا', base_price: 65 },
   { name: 'شاورما', base_price: 65 },
   { name: 'شيش طاووق', base_price: 65 },
+  { name: 'تشيكن برجر', base_price: 90 },
   { name: 'كوردون بلو', base_price: 70 },
   { name: 'كفتة', base_price: 50 },
   { name: 'كبدة', base_price: 45 },
@@ -239,44 +240,44 @@ export const REQUIRED_SANDWICH_PRODUCTS = [
   { name: 'سجق إسكندراني', base_price: 50 },
   { name: 'حواوشي', base_price: 25 },
   { name: 'كباب حلة', base_price: 65 },
-  { name: 'داود باشا', base_price: 60 },
+  { name: 'داود باشا', base_price: 65 },
   { name: 'روزبيف', base_price: 65 },
-  { name: 'كلاسيك برجر', base_price: 65 },
+  { name: 'كلاسيك برجر', base_price: 80 },
 ]
 
 export const REQUIRED_CREPE_PRODUCTS = [
-  { name: 'كريب بطاطس', base_price: 55 },
-  { name: 'بانيه', base_price: 70 },
-  { name: 'زنجر', base_price: 70 },
-  { name: 'كرنشي', base_price: 75 },
-  { name: 'فاهيتا', base_price: 80 },
-  { name: 'شيش طاووق', base_price: 80 },
-  { name: 'شاورما', base_price: 80 },
-  { name: 'كوردون بلو', base_price: 85 },
+  { name: 'كريب بطاطس', base_price: 50 },
+  { name: 'بانيه', base_price: 60 },
+  { name: 'زنجر', base_price: 80 },
+  { name: 'كرنشي', base_price: 80 },
+  { name: 'فاهيتا', base_price: 90 },
+  { name: 'شيش طاووق', base_price: 90 },
+  { name: 'شاورما', base_price: 90 },
+  { name: 'كوردون بلو', base_price: 90 },
   { name: 'ميكس فراخ', base_price: 90 },
-  { name: 'كونو دجاج', base_price: 85 },
-  { name: 'كونو العالمي', base_price: 95 },
-  { name: 'داوود باشا', base_price: 75 },
+  { name: 'كونو دجاج', base_price: 100 },
+  { name: 'كونو العالمي', base_price: 120 },
+  { name: 'داوود باشا', base_price: 95 },
   { name: 'كفتة', base_price: 90 },
-  { name: 'كبدة', base_price: 65 },
-  { name: 'سوسيس', base_price: 65 },
-  { name: 'سجق', base_price: 70 },
-  { name: 'روزبيف', base_price: 80 },
-  { name: 'كباب حلة', base_price: 85 },
+  { name: 'كبدة', base_price: 70 },
+  { name: 'سوسيس', base_price: 60 },
+  { name: 'سجق', base_price: 90 },
+  { name: 'روزبيف', base_price: 95 },
+  { name: 'كباب حلة', base_price: 95 },
   { name: 'ميكس اللحوم', base_price: 90 },
-  { name: 'كونو اللحوم', base_price: 90 },
+  { name: 'كونو اللحوم', base_price: 100 },
 ]
 
 export const REQUIRED_PIZZA_PRODUCTS = [
-  { name: 'مارجريتا بالجبن', base_price: 85 },
-  { name: 'بيبروني', base_price: 140 },
-  { name: 'كرنشي رانش', base_price: 110 },
-  { name: 'مكسيكان', base_price: 110 },
-  { name: 'تشيكن باربيكيو', base_price: 95 },
-  { name: 'بافلو تشيكن', base_price: 95 },
-  { name: 'مشكل دجاج', base_price: 100 },
-  { name: 'سجق', base_price: 110 },
-  { name: 'مشكل لحوم', base_price: 115 },
+  { name: 'مارجريتا بالجبن', base_price: 110 },
+  { name: 'بيبروني', base_price: 130 },
+  { name: 'تشيكن رانش', base_price: 145 },
+  { name: 'مكسيكان', base_price: 140 },
+  { name: 'تشيكن باربيكيو', base_price: 145 },
+  { name: 'بافلو تشيكن', base_price: 135 },
+  { name: 'مشكل دجاج', base_price: 140 },
+  { name: 'سجق', base_price: 140 },
+  { name: 'مشكل لحوم', base_price: 140 },
 ]
 
 export const REQUIRED_PASTA_PRODUCTS = [
@@ -306,7 +307,7 @@ export const REQUIRED_RIZZO_PRODUCTS = [
   { name: 'ريزو شيش طاووق', base_price: 75 },
   { name: 'ريزو كوردون بلو', base_price: 80 },
   { name: 'ريزو كفتة', base_price: 65 },
-  { name: 'ريزو كبدة', base_price: 70 },
+  { name: 'ريزو كبدة', base_price: 65 },
   { name: 'ريزو سوسيس', base_price: 65 },
   { name: 'ريزو داود باشا', base_price: 75 },
   { name: 'ريزو كباب حلة', base_price: 75 },
@@ -315,20 +316,18 @@ export const REQUIRED_RIZZO_PRODUCTS = [
 ]
 
 export const REQUIRED_CHICKEN_MEAT_MEAL_PRODUCTS = [
-  {
-    name: 'فراخ بالبطاطس (ربع / نصف)',
-    base_price: 75,
-    options: [{ name: 'الحجم', required: true, values: [{ name: 'ربع', price: 75 }, { name: 'نصف', price: 140 }] }],
-  },
-  {
-    name: 'فراخ مشوية (ربع / نصف)',
-    base_price: 80,
-    options: [{ name: 'الحجم', required: true, values: [{ name: 'ربع', price: 80 }, { name: 'نصف', price: 150 }] }],
-  },
+  { name: 'فراخ بالبطاطس (ربع)', base_price: 75 },
+  { name: 'فراخ بالبطاطس (نصف)', base_price: 140 },
+  { name: 'فراخ مشوية (ربع)', base_price: 80 },
+  { name: 'فراخ مشوية (نصف)', base_price: 150 },
   { name: 'وجبة شيش طاووق', base_price: 120 },
-  { name: 'وجبة كريسبي / كوردون', base_price: 125 },
-  { name: 'وجبات لحوم (كفتة / سجق / كبدة)', base_price: 110 },
-  { name: 'كباب حلة / داود باشا', base_price: 125 },
+  { name: 'وجبة كريسبي', base_price: 125 },
+  { name: 'وجبة كوردون', base_price: 125 },
+  { name: 'وجبة كفتة', base_price: 110 },
+  { name: 'وجبة سجق', base_price: 110 },
+  { name: 'وجبة كبدة', base_price: 110 },
+  { name: 'وجبة كباب حلة', base_price: 125 },
+  { name: 'وجبة داود باشا', base_price: 125 },
   { name: 'ميكس العالمي', base_price: 140 },
 ]
 
@@ -340,10 +339,10 @@ export const REQUIRED_OUTDOOR_GRILL_PRODUCTS = [
 ]
 
 export const REQUIRED_SWEET_BOX_PRODUCTS = [
-  { name: 'بوكس الشعب', base_price: 190, description: '1 كبدة + 1 كفتة + 1 سجق + 1 حلو + بطاطس' },
-  { name: 'بوكس الصحاب', base_price: 390, description: '3 روزبيف + 3 سجق كباب حلة + 3 شيش طاووق + 3 حلو + 3 بانيه + لتر صودا' },
+  { name: 'بوكس الشعب', base_price: 130, description: '1 كبدة + 1 كفتة + 1 سجق + 1 حلو + بطاطس' },
+  { name: 'بوكس الصحاب', base_price: 390, description: '3 روزبيف + 3 سجق + 3 كباب حلة + 3 شيش طاووق + 3 حلو + 3 بانيه' },
   { name: 'بوكس التوينز', base_price: 290, description: '2 كرنشي + 2 كوردون بلو + 2 كفتة + 2 حلو' },
-  { name: 'بوكس ميكسي', base_price: 250, description: 'ميكس حواوشي + كرنشي رانش + كفتة فاهيتا + بطاطس + كولا' },
+  { name: 'بوكس ميكسي', base_price: 250, description: 'ميكس حواوشي + كرنشي رانش + كفتة فاهيتا + بطاطس' },
 ]
 
 export async function ensureRequiredSandwichProducts() {
@@ -354,43 +353,54 @@ export async function ensureRequiredSandwichProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available')
+    .select('id,name,base_price,category_id,sort_order,is_available,description')
     .eq('category_id', SANDWICHES_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
+  const requiredNames = new Set(REQUIRED_SANDWICH_PRODUCTS.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
-  const report = { existing: [], added: [], errors: [] }
-  const toInsert = []
+  const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
 
-  REQUIRED_SANDWICH_PRODUCTS.forEach((req, idx) => {
+  // Update existing
+  for (const req of REQUIRED_SANDWICH_PRODUCTS) {
     const found = existingByName.get(req.name)
-    if (found) {
-      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    if (!found) continue
+    const patch = {}
+    if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
+    if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
+    if (found.is_available !== true) patch.is_available = true
+    if (Object.keys(patch).length) {
+      const upRes = await updateProduct(found.id, patch)
+      if (upRes.error) { report.errors.push({ name: req.name, action: 'update', error: upRes.error }); return { data: { report }, error: upRes.error, report } }
+      report.updated.push({ id: found.id, name: req.name })
     } else {
-      toInsert.push({
-        name: req.name,
-        base_price: req.base_price,
-        category_id: SANDWICHES_CATEGORY_ID,
-        is_available: true,
-        description: null,
-        sort_order: maxSort + 1 + idx,
-      })
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    }
+  }
+
+  // Insert missing
+  const toInsert = []
+  REQUIRED_SANDWICH_PRODUCTS.forEach((req, idx) => {
+    if (!existingByName.get(req.name)) {
+      toInsert.push({ name: req.name, base_price: req.base_price, category_id: SANDWICHES_CATEGORY_ID, is_available: true, description: req.description ?? null, sort_order: maxSort + 1 + idx })
     }
   })
-
   if (toInsert.length) {
-    const { data: inserted, error: insertError } = await supabase
-      .from('products')
-      .insert(toInsert)
-      .select('id,name,base_price,category_id,sort_order,is_available')
-
-    if (insertError) {
-      report.errors.push({ action: 'insert', error: insertError })
-      return { data: { report }, error: insertError, report }
-    }
+    const { data: inserted, error: insertError } = await supabase.from('products').insert(toInsert).select('id,name,base_price,category_id,sort_order,is_available,description')
+    if (insertError) { report.errors.push({ action: 'insert', error: insertError }); return { data: { report }, error: insertError, report } }
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  // Remove not in required (e.g. old items not matching PDF). Be careful: do not remove items user wants? But requirement says "Remove products that are no longer listed in the new PDF." so yes.
+  for (const p of existing || []) {
+    if (!requiredNames.has(p.name)) {
+      const delRes = await deleteProduct(p.id)
+      if (delRes.error) { report.errors.push({ name: p.name, action: 'delete', error: delRes.error }); return { data: { report }, error: delRes.error, report } }
+      report.removed = report.removed || []
+      report.removed.push({ id: p.id, name: p.name })
+    }
   }
 
   const error = report.errors[0]?.error || null
@@ -405,43 +415,51 @@ export async function ensureRequiredCrepeProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available')
+    .select('id,name,base_price,category_id,sort_order,is_available,description')
     .eq('category_id', CREPES_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
+  const requiredNames = new Set(REQUIRED_CREPE_PRODUCTS.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
-  const report = { existing: [], added: [], errors: [] }
-  const toInsert = []
+  const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
 
-  REQUIRED_CREPE_PRODUCTS.forEach((req, idx) => {
+  for (const req of REQUIRED_CREPE_PRODUCTS) {
     const found = existingByName.get(req.name)
-    if (found) {
-      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    if (!found) continue
+    const patch = {}
+    if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
+    if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
+    if (found.is_available !== true) patch.is_available = true
+    if (Object.keys(patch).length) {
+      const upRes = await updateProduct(found.id, patch)
+      if (upRes.error) { report.errors.push({ name: req.name, action: 'update', error: upRes.error }); return { data: { report }, error: upRes.error, report } }
+      report.updated.push({ id: found.id, name: req.name })
     } else {
-      toInsert.push({
-        name: req.name,
-        base_price: req.base_price,
-        category_id: CREPES_CATEGORY_ID,
-        is_available: true,
-        description: null,
-        sort_order: maxSort + 1 + idx,
-      })
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    }
+  }
+
+  const toInsert = []
+  REQUIRED_CREPE_PRODUCTS.forEach((req, idx) => {
+    if (!existingByName.get(req.name)) {
+      toInsert.push({ name: req.name, base_price: req.base_price, category_id: CREPES_CATEGORY_ID, is_available: true, description: req.description ?? null, sort_order: maxSort + 1 + idx })
     }
   })
-
   if (toInsert.length) {
-    const { data: inserted, error: insertError } = await supabase
-      .from('products')
-      .insert(toInsert)
-      .select('id,name,base_price,category_id,sort_order,is_available')
-
-    if (insertError) {
-      report.errors.push({ action: 'insert', error: insertError })
-      return { data: { report }, error: insertError, report }
-    }
+    const { data: inserted, error: insertError } = await supabase.from('products').insert(toInsert).select('id,name,base_price,category_id,sort_order,is_available,description')
+    if (insertError) { report.errors.push({ action: 'insert', error: insertError }); return { data: { report }, error: insertError, report } }
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  for (const p of existing || []) {
+    if (!requiredNames.has(p.name)) {
+      const delRes = await deleteProduct(p.id)
+      if (delRes.error) { report.errors.push({ name: p.name, action: 'delete', error: delRes.error }); return { data: { report }, error: delRes.error, report } }
+      report.removed = report.removed || []
+      report.removed.push({ id: p.id, name: p.name })
+    }
   }
 
   const error = report.errors[0]?.error || null
@@ -456,43 +474,111 @@ export async function ensureRequiredPizzaProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available')
+    .select('id,name,base_price,category_id,sort_order,is_available,description')
     .eq('category_id', PIZZA_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
-  const existingByName = new Map((existing || []).map((p) => [p.name, p]))
-  const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
-  const report = { existing: [], added: [], errors: [] }
-  const toInsert = []
+  const requiredNames = new Set(REQUIRED_PIZZA_PRODUCTS.map((r) => r.name))
+  const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
 
-  REQUIRED_PIZZA_PRODUCTS.forEach((req, idx) => {
-    const found = existingByName.get(req.name)
-    if (found) {
-      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+  // 1) Rename old "كرنشي رانش" -> "تشيكن رانش" if present and new name not present (preserve id)
+  const oldCrunchy = (existing || []).find((p) => p.name === 'كرنشي رانش')
+  const hasNewName = (existing || []).some((p) => p.name === 'تشيكن رانش')
+  if (oldCrunchy && !hasNewName) {
+    const upRes = await updateProduct(oldCrunchy.id, { name: 'تشيكن رانش', base_price: 145, is_available: true, description: oldCrunchy.description ?? null })
+    if (upRes.error) {
+      report.errors.push({ name: 'كرنشي رانش->تشيكن رانش', action: 'rename', error: upRes.error })
+      return { data: { report }, error: upRes.error, report }
+    }
+    report.updated.push({ id: oldCrunchy.id, name: 'تشيكن رانش (renamed from كرنشي رانش)' })
+  } else if (oldCrunchy && hasNewName && oldCrunchy.id !== (existing || []).find((p) => p.name === 'تشيكن رانش')?.id) {
+    // both exist: delete the old duplicate, keep the existing "تشيكن رانش" record
+    const delRes = await deleteProduct(oldCrunchy.id)
+    if (delRes.error) {
+      report.errors.push({ name: 'كرنشي رانش', action: 'delete-duplicate', error: delRes.error })
+      return { data: { report }, error: delRes.error, report }
+    }
+    report.removed.push({ id: oldCrunchy.id, name: 'كرنشي رانش (duplicate removed)' })
+  } else if (oldCrunchy && hasNewName && oldCrunchy.id === (existing || []).find((p) => p.name === 'تشيكن رانش')?.id) {
+    // same record already named correctly (shouldn't happen), just ensure price
+    const upRes = await updateProduct(oldCrunchy.id, { base_price: 145, is_available: true })
+    if (upRes.error) {
+      report.errors.push({ name: 'تشيكن رانش', action: 'update', error: upRes.error })
+      return { data: { report }, error: upRes.error, report }
+    }
+  }
+
+  // Re-fetch after possible rename/delete to be safe
+  const { data: existing2, error: fetchError2 } = await supabase
+    .from('products')
+    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .eq('category_id', PIZZA_CATEGORY_ID)
+  if (fetchError2) return { data: null, error: fetchError2, report: null }
+
+  const existingByName2 = new Map((existing2 || []).map((p) => [p.name, p]))
+  const maxSort2 = (existing2 || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
+
+  // 2) Update existing required items to exact prices/descriptions/availability
+  for (const req of REQUIRED_PIZZA_PRODUCTS) {
+    const found = existingByName2.get(req.name)
+    if (!found) continue
+    const patch = {}
+    if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
+    if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
+    if (found.is_available !== true) patch.is_available = true
+    if (Object.keys(patch).length) {
+      const upRes = await updateProduct(found.id, patch)
+      if (upRes.error) {
+        report.errors.push({ name: req.name, action: 'update', error: upRes.error })
+        return { data: { report }, error: upRes.error, report }
+      }
+      report.updated.push({ id: found.id, name: req.name })
     } else {
+      report.existing.push({ id: found.id, name: req.name, base_price: Number(found.base_price), category_id: found.category_id })
+    }
+  }
+
+  // 3) Insert any missing required items
+  const toInsert = []
+  REQUIRED_PIZZA_PRODUCTS.forEach((req, idx) => {
+    if (!existingByName2.get(req.name)) {
       toInsert.push({
         name: req.name,
         base_price: req.base_price,
         category_id: PIZZA_CATEGORY_ID,
         is_available: true,
-        description: null,
-        sort_order: maxSort + 1 + idx,
+        description: req.description ?? null,
+        sort_order: maxSort2 + 1 + idx,
       })
     }
   })
-
   if (toInsert.length) {
     const { data: inserted, error: insertError } = await supabase
       .from('products')
       .insert(toInsert)
-      .select('id,name,base_price,category_id,sort_order,is_available')
-
+      .select('id,name,base_price,category_id,sort_order,is_available,description')
     if (insertError) {
       report.errors.push({ action: 'insert', error: insertError })
       return { data: { report }, error: insertError, report }
     }
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  // 4) Remove any pizza products not in required set (only this category)
+  const { data: existing3 } = await supabase
+    .from('products')
+    .select('id,name')
+    .eq('category_id', PIZZA_CATEGORY_ID)
+  for (const p of existing3 || []) {
+    if (!requiredNames.has(p.name)) {
+      const delRes = await deleteProduct(p.id)
+      if (delRes.error) {
+        report.errors.push({ name: p.name, action: 'delete', error: delRes.error })
+        return { data: { report }, error: delRes.error, report }
+      }
+      report.removed.push({ id: p.id, name: p.name })
+    }
   }
 
   const error = report.errors[0]?.error || null
@@ -512,16 +598,35 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
+  const requiredNames = new Set(requiredProducts.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
-  const report = { existing: [], added: [], errors: [] }
-  const toInsert = []
+  const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
 
-  requiredProducts.forEach((req, idx) => {
+  // Update existing items that match required names (price/description/availability)
+  for (const req of requiredProducts) {
     const found = existingByName.get(req.name)
-    if (found) {
-      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    if (!found) continue
+    const patch = {}
+    if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
+    if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
+    if (found.is_available !== true) patch.is_available = true
+    if (Object.keys(patch).length) {
+      const upRes = await updateProduct(found.id, patch)
+      if (upRes.error) {
+        report.errors.push({ name: req.name, action: 'update', error: upRes.error })
+        return { data: { report }, error: upRes.error, report }
+      }
+      report.updated.push({ id: found.id, name: req.name })
     } else {
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+    }
+  }
+
+  // Insert missing
+  const toInsert = []
+  requiredProducts.forEach((req, idx) => {
+    if (!existingByName.get(req.name)) {
       toInsert.push({
         name: req.name,
         base_price: req.base_price,
@@ -532,7 +637,6 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
       })
     }
   })
-
   if (toInsert.length) {
     const { data: inserted, error: insertError } = await supabase
       .from('products')
@@ -544,6 +648,18 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
       return { data: { report }, error: insertError, report }
     }
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
+  }
+
+  // Remove products not in required list (only within this category)
+  for (const p of existing || []) {
+    if (!requiredNames.has(p.name)) {
+      const delRes = await deleteProduct(p.id)
+      if (delRes.error) {
+        report.errors.push({ name: p.name, action: 'delete', error: delRes.error })
+        return { data: { report }, error: delRes.error, report }
+      }
+      report.removed.push({ id: p.id, name: p.name })
+    }
   }
 
   const error = report.errors[0]?.error || null
@@ -566,20 +682,46 @@ export async function ensureRequiredChickenMeatMealProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available')
+    .select('id,name,base_price,category_id,sort_order,is_available,description')
     .eq('category_id', CHICKEN_MEAT_MEALS_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
+  const requiredNames = new Set(REQUIRED_CHICKEN_MEAT_MEAL_PRODUCTS.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
-  const report = { existing: [], added: [], errors: [] }
+  const report = { existing: [], added: [], removed: [], errors: [] }
+
+  // Remove obsolete products in this category
+  for (const p of existing || []) {
+    if (!requiredNames.has(p.name)) {
+      const delRes = await deleteProduct(p.id)
+      if (delRes.error) {
+        report.errors.push({ name: p.name, action: 'delete', error: delRes.error })
+        return { data: { report }, error: delRes.error, report }
+      }
+      report.removed.push({ id: p.id, name: p.name })
+    }
+  }
 
   let sortCursor = maxSort + 1
   for (const req of REQUIRED_CHICKEN_MEAT_MEAL_PRODUCTS) {
     const found = existingByName.get(req.name)
     if (found) {
-      report.existing.push({ id: found.id, name: found.name, base_price: Number(found.base_price), category_id: found.category_id })
+      // Update base price/description if changed
+      const patch = {}
+      if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
+      if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
+      if (Object.keys(patch).length) {
+        const upRes = await updateProduct(found.id, patch)
+        if (upRes.error) {
+          report.errors.push({ name: req.name, action: 'update', error: upRes.error })
+          return { data: { report }, error: upRes.error, report }
+        }
+      }
+      // Remove any options/groups if present (cleanup old size groups)
+      await replaceProductOptions(found.id, [])
+      report.existing.push({ id: found.id, name: found.name, base_price: Number(req.base_price), category_id: found.category_id })
       continue
     }
 
@@ -596,44 +738,8 @@ export async function ensureRequiredChickenMeatMealProducts() {
       report.errors.push({ name: req.name, action: 'insert', error: prodRes.error })
       return { data: { report }, error: prodRes.error, report }
     }
-
-    if (req.options?.length) {
-      const optRes = await replaceProductOptions(prodRes.data.id, req.options.map((g, gi) => ({
-        name: g.name,
-        is_required: g.required !== false,
-        min_select: 1,
-        max_select: 1,
-        sort_order: gi,
-        values: (g.values || []).map((v, vi) => ({
-          name: v.name,
-          price_delta: 0,
-          is_available: true,
-          sort_order: vi,
-        })),
-      })))
-      if (optRes.error) {
-        report.errors.push({ name: req.name, action: 'options', error: optRes.error })
-        return { data: { report }, error: optRes.error, report }
-      }
-      const savedGroups = optRes.data || []
-      const comboRows = []
-      for (const gReq of req.options) {
-        const gSaved = savedGroups.find((g) => g.name === gReq.name)
-        if (!gSaved) continue
-        for (const vReq of (gReq.values || [])) {
-          const vSaved = (gSaved.values || []).find((v) => v.name === vReq.name)
-          if (vSaved) comboRows.push({ valueIds: [vSaved.id], price: vReq.price })
-        }
-      }
-      if (comboRows.length) {
-        const cRes = await saveProductCombinations(prodRes.data.id, savedGroups, comboRows)
-        if (cRes.error) {
-          report.errors.push({ name: req.name, action: 'combinations', error: cRes.error })
-          return { data: { report }, error: cRes.error, report }
-        }
-      }
-    }
-
+    // ensure no options
+    await replaceProductOptions(prodRes.data.id, [])
     report.added.push({ id: prodRes.data.id, name: prodRes.data.name, base_price: Number(prodRes.data.base_price), category_id: prodRes.data.category_id })
   }
 
