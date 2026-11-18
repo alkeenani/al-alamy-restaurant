@@ -78,6 +78,21 @@
 .admin-list-card__meta-row span:last-child{color:var(--color-text);font-weight:600;text-align:left;word-break:break-word}
 .admin-list-card__actions{display:flex;gap:.5rem;flex-wrap:wrap}
 .admin-list-card__actions .admin-btn{flex:1 1 8rem}
+.admin-combos{display:grid;gap:.75rem}
+.admin-combos__table{min-width:560px}
+.admin-combos__label-cell{white-space:normal;word-break:break-word;line-height:1.6;min-width:14rem}
+.admin-combos__price-cell{width:12rem;min-width:10rem;vertical-align:middle}
+.admin-combos__price-input{min-width:8.5rem}
+.admin-combos__cards{display:none}
+.admin-combo-card{border:1px solid var(--color-border);border-radius:var(--radius-md);background:#fff;padding:.85rem;display:grid;gap:.7rem}
+.admin-combo-card__header{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.admin-combo-card__index{font-size:.8rem;font-weight:700;color:var(--color-primary);background:var(--color-primary-soft);border-radius:999px;padding:.15rem .55rem}
+.admin-combo-card__parts{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.admin-combo-card__part{display:grid;grid-template-columns:minmax(0,7rem) minmax(0,1fr);gap:.5rem;align-items:start;padding:.45rem .55rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:color-mix(in srgb,var(--color-primary-soft) 30%, #fff)}
+.admin-combo-card__group{font-size:.82rem;color:var(--color-text-muted);font-weight:600;line-height:1.5}
+.admin-combo-card__value{color:var(--color-text);font-size:.95rem;line-height:1.5;word-break:break-word}
+.admin-combo-card__price-field{margin:0}
+.admin-combo-card__price-field .admin-input{width:100%;font-size:1rem}
 /* laptop 1024-1439: compact sidebar */
 @media (max-width:1439px){.admin-shell__layout{grid-template-columns:200px minmax(0,1fr)}.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* tablet 768-1023 */
@@ -107,6 +122,8 @@
 .admin-toolbar{flex-direction:column;align-items:stretch}
 .admin-toolbar > *,.admin-toolbar__control{flex:1 1 100%;width:100%;max-width:none !important}
 .admin-table-wrap--responsive{display:none}
+.admin-combos__table-wrap{display:none}
+.admin-combos__cards{display:grid;gap:.75rem}
 .admin-list-cards{display:grid;gap:.75rem}
 .admin-row-actions .admin-btn{flex:1 1 auto}
 }

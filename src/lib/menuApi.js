@@ -208,12 +208,12 @@ export async function deleteCategory(id) {
 export const REQUIRED_MENU_CATEGORIES = [
   { name: 'السندوتشات', slug: 'sandwiches', sort_order: 1 },
   { name: 'الكريب', slug: 'crepes', sort_order: 2 },
-  { name: 'البيتزا', slug: 'pizza', sort_order: 3 },
+  { name: 'أطباق الريزو', slug: 'rizzo-dishes', sort_order: 3 },
   { name: 'أطباق المكرونة', slug: 'pasta-dishes', sort_order: 4 },
-  { name: 'أطباق الريزو', slug: 'rizzo-dishes', sort_order: 5 },
-  { name: 'وجبات الفراخ واللحوم', slug: 'chicken-meat-meals', sort_order: 6 },
-  { name: 'التسويات الخارجية والشوي', slug: 'outdoor-grill', sort_order: 7 },
-  { name: 'بوكسات اللمة الحلوة', slug: 'sweet-gathering-boxes', sort_order: 8 },
+  { name: 'البيتزا', slug: 'pizza', sort_order: 5 },
+  { name: 'بوكسات اللمة الحلوة', slug: 'sweet-gathering-boxes', sort_order: 6 },
+  { name: 'وجبات الفراخ واللحوم', slug: 'chicken-meat-meals', sort_order: 7 },
+  { name: 'التسويات الخارجية والشوي', slug: 'outdoor-grill', sort_order: 8 },
 ]
 
 export const SANDWICHES_CATEGORY_ID = '8682e8a5-f665-4023-a6ec-044b7f5efd8d'
@@ -226,25 +226,26 @@ export const OUTDOOR_GRILL_CATEGORY_ID = '49b97c08-6fc2-4e81-bd8f-a11866f443e8'
 export const SWEET_BOXES_CATEGORY_ID = 'f678db0a-65e9-43d5-bfea-bd48e27e3280'
 
 export const REQUIRED_SANDWICH_PRODUCTS = [
-  { name: 'بانيه', base_price: 50 },
-  { name: 'زنجر', base_price: 45 },
-  { name: 'كرنشي', base_price: 45 },
-  { name: 'فاهيتا', base_price: 50 },
-  { name: 'شاورما', base_price: 25 }, // source menu value; flagged for owner confirmation
+  { name: 'بانيه', base_price: 55 },
+  { name: 'زنجر', base_price: 60 },
+  { name: 'كرنشي', base_price: 60 },
+  { name: 'فاهيتا', base_price: 65 },
+  { name: 'شاورما', base_price: 65 },
   { name: 'شيش طاووق', base_price: 65 },
-  { name: 'كوردون بلو', base_price: 60 },
-  { name: 'كفتة', base_price: 55 },
-  { name: 'كبدة', base_price: 60 },
-  { name: 'سوسيس', base_price: 60 },
-  { name: 'سجق إسكندراني', base_price: 65 },
-  { name: 'حواوشي', base_price: 65 },
+  { name: 'كوردون بلو', base_price: 70 },
+  { name: 'كفتة', base_price: 50 },
+  { name: 'كبدة', base_price: 45 },
+  { name: 'سوسيس', base_price: 45 },
+  { name: 'سجق إسكندراني', base_price: 50 },
+  { name: 'حواوشي', base_price: 25 },
   { name: 'كباب حلة', base_price: 65 },
-  { name: 'داود باشا', base_price: 70 },
+  { name: 'داود باشا', base_price: 60 },
   { name: 'روزبيف', base_price: 65 },
   { name: 'كلاسيك برجر', base_price: 65 },
 ]
 
 export const REQUIRED_CREPE_PRODUCTS = [
+  { name: 'كريب بطاطس', base_price: 55 },
   { name: 'بانيه', base_price: 70 },
   { name: 'زنجر', base_price: 70 },
   { name: 'كرنشي', base_price: 75 },
@@ -252,19 +253,18 @@ export const REQUIRED_CREPE_PRODUCTS = [
   { name: 'شيش طاووق', base_price: 80 },
   { name: 'شاورما', base_price: 80 },
   { name: 'كوردون بلو', base_price: 85 },
-  { name: 'ميكس فراخ', base_price: 85 },
-  { name: 'كونو دجاج', base_price: 90 },
-  { name: 'داوود باشا', base_price: 70 },
-  { name: 'كفتة', base_price: 70 },
-  { name: 'كبدة', base_price: 75 },
-  { name: 'سوسيس', base_price: 80 },
-  { name: 'سجق', base_price: 80 },
+  { name: 'ميكس فراخ', base_price: 90 },
+  { name: 'كونو دجاج', base_price: 85 },
+  { name: 'كونو العالمي', base_price: 95 },
+  { name: 'داوود باشا', base_price: 75 },
+  { name: 'كفتة', base_price: 90 },
+  { name: 'كبدة', base_price: 65 },
+  { name: 'سوسيس', base_price: 65 },
+  { name: 'سجق', base_price: 70 },
   { name: 'روزبيف', base_price: 80 },
   { name: 'كباب حلة', base_price: 85 },
   { name: 'ميكس اللحوم', base_price: 90 },
-  { name: 'كونو اللحوم', base_price: 85 },
-  { name: 'كريب بطاطس', base_price: 55 },
-  { name: 'كونو العالمي', base_price: 95 },
+  { name: 'كونو اللحوم', base_price: 90 },
 ]
 
 export const REQUIRED_PIZZA_PRODUCTS = [
@@ -306,11 +306,11 @@ export const REQUIRED_RIZZO_PRODUCTS = [
   { name: 'ريزو شيش طاووق', base_price: 75 },
   { name: 'ريزو كوردون بلو', base_price: 80 },
   { name: 'ريزو كفتة', base_price: 65 },
+  { name: 'ريزو كبدة', base_price: 70 },
   { name: 'ريزو سوسيس', base_price: 65 },
+  { name: 'ريزو داود باشا', base_price: 75 },
   { name: 'ريزو كباب حلة', base_price: 75 },
   { name: 'ريزو سجق', base_price: 70 },
-  { name: 'ريزو كبدة', base_price: 70 },
-  { name: 'ريزو داود باشا', base_price: 75 },
   { name: 'ريزو روزبيف', base_price: 75 },
 ]
 

@@ -487,33 +487,80 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
             <>
               <div className="admin-divider" />
               <h3 className="admin-subsection-title">أسعار التركيبات</h3>
-              <p className="admin-help" style={{marginBottom:'.75rem'}}>عند وجود أكثر من مجموعة خيارات يجب تحديد سعر نهائي صريح لكل تركيبة ممكنة. لن يتم تخمين أي سعر.</p>
+              <p className="admin-help" style={{ marginBottom: '.75rem' }}>عند وجود أكثر من مجموعة خيارات يجب تحديد سعر نهائي صريح لكل تركيبة ممكنة. لن يتم تخمين أي سعر.</p>
               {allCombinations.length === 0 ? (
                 <div className="admin-empty">أدخل قيمًا لجميع المجموعات لعرض التركيبات.</div>
               ) : (
-                <div className="admin-table-wrap">
-                  <table className="admin-table" style={{minWidth: '520px'}}>
-                    <thead>
-                      <tr>
-                        <th>التركيبة</th>
-                        <th>السعر النهائي (ج.م)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {allCombinations.map((combo, idx) => {
-                        const key = combo.map(v=>v.tempId).join('|')
-                        const label = combo.map((v, gi) => `${draftGroups[gi]?.name || ''}: ${v.name || ''}`).join(' | ')
-                        return (
-                          <tr key={key || idx}>
-                            <td>{label}</td>
-                            <td style={{minWidth:'12rem'}}>
-                              <input className="admin-input" type="number" min="0" step="0.01" value={comboPrices[key] ?? ''} onChange={e=>setComboPrices(m=>({...m,[key]: e.target.value}))} placeholder="مثال: 65" />
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
+                <div className="admin-combos">
+                  <div className="admin-table-wrap admin-combos__table-wrap">
+                    <table className="admin-table admin-combos__table">
+                      <thead>
+                        <tr>
+                          <th>التركيبة</th>
+                          <th>السعر النهائي (ج.م)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allCombinations.map((combo, idx) => {
+                          const key = combo.map((v) => v.tempId).join('|')
+                          const label = combo.map((v, gi) => `${draftGroups[gi]?.name || ''}: ${v.name || ''}`).join(' | ')
+                          return (
+                            <tr key={key || idx}>
+                              <td className="admin-combos__label-cell">{label}</td>
+                              <td className="admin-combos__price-cell">
+                                <input
+                                  className="admin-input admin-combos__price-input"
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  inputMode="decimal"
+                                  value={comboPrices[key] ?? ''}
+                                  onChange={(e) => setComboPrices((m) => ({ ...m, [key]: e.target.value }))}
+                                  placeholder="مثال: 65"
+                                  aria-label={`السعر النهائي لـ ${label}`}
+                                />
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="admin-combos__cards" role="list">
+                    {allCombinations.map((combo, idx) => {
+                      const key = combo.map((v) => v.tempId).join('|')
+                      return (
+                        <article key={key || idx} className="admin-combo-card" role="listitem">
+                          <div className="admin-combo-card__header">
+                            <span className="admin-combo-card__index">تركيبة {idx + 1}</span>
+                          </div>
+                          <ul className="admin-combo-card__parts">
+                            {combo.map((v, gi) => (
+                              <li key={`${key}-${gi}`} className="admin-combo-card__part">
+                                <span className="admin-combo-card__group">{draftGroups[gi]?.name || `مجموعة ${gi + 1}`}</span>
+                                <strong className="admin-combo-card__value">{v.name || '-'}</strong>
+                              </li>
+                            ))}
+                          </ul>
+                          <div className="admin-field admin-combo-card__price-field">
+                            <label htmlFor={`combo-price-${idx}`}>السعر النهائي (ج.م)</label>
+                            <input
+                              id={`combo-price-${idx}`}
+                              className="admin-input"
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              inputMode="decimal"
+                              value={comboPrices[key] ?? ''}
+                              onChange={(e) => setComboPrices((m) => ({ ...m, [key]: e.target.value }))}
+                              placeholder="مثال: 65"
+                            />
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
                 </div>
               )}
             </>
