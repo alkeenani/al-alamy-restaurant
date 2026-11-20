@@ -205,10 +205,12 @@ export default function AdminDashboard({ user, onLogout }) {
 
   const stats = useMemo(() => {
     const categories = data.categories.length
-    const activeCategories = data.categories.filter(c=>c.is_active).length
+    const visibleCategories = data.categories.filter(c => c.is_active !== false).length
+    const availableCategories = data.categories.filter(c => c.is_active !== false && c.is_available !== false).length
     const products = data.products.length
-    const availableProducts = data.products.filter(p=>p.is_available).length
-    return { categories, activeCategories, products, availableProducts }
+    const visibleProducts = data.products.filter(p => p.is_active !== false).length
+    const availableProducts = data.products.filter(p => p.is_active !== false && p.is_available).length
+    return { categories, visibleCategories, availableCategories, products, visibleProducts, availableProducts }
   }, [data])
 
   const sectionTitle = tab === 'overview' ? 'نظرة عامة' : tab === 'categories' ? 'إدارة الأقسام' : 'إدارة المنتجات'
@@ -269,13 +271,15 @@ export default function AdminDashboard({ user, onLogout }) {
                 <div className="admin-empty">جاري تحميل البيانات…</div>
               ) : (
                 <div className="admin-stats">
-                  <div className="admin-stat"><span className="admin-stat__label">الأقسام</span><strong className="admin-stat__value">{stats.categories}</strong></div>
-                  <div className="admin-stat"><span className="admin-stat__label">الأقسام النشطة</span><strong className="admin-stat__value">{stats.activeCategories}</strong></div>
-                  <div className="admin-stat"><span className="admin-stat__label">المنتجات</span><strong className="admin-stat__value">{stats.products}</strong></div>
+                  <div className="admin-stat"><span className="admin-stat__label">الأقسام (الكل)</span><strong className="admin-stat__value">{stats.categories}</strong></div>
+                  <div className="admin-stat"><span className="admin-stat__label">الأقسام الظاهرة</span><strong className="admin-stat__value">{stats.visibleCategories}</strong></div>
+                  <div className="admin-stat"><span className="admin-stat__label">الأقسام المتاحة</span><strong className="admin-stat__value">{stats.availableCategories}</strong></div>
+                  <div className="admin-stat"><span className="admin-stat__label">المنتجات (الكل)</span><strong className="admin-stat__value">{stats.products}</strong></div>
+                  <div className="admin-stat"><span className="admin-stat__label">المنتجات الظاهرة</span><strong className="admin-stat__value">{stats.visibleProducts}</strong></div>
                   <div className="admin-stat"><span className="admin-stat__label">المنتجات المتاحة</span><strong className="admin-stat__value">{stats.availableProducts}</strong></div>
                 </div>
               )}
-              <div className="admin-note">يمكنك من هنا إدارة الأقسام والمنتجات والخيارات والأسعار. التغييرات تظهر في القائمة العامة بعد تحديث الصفحة.</div>
+              <div className="admin-note">تحكم مستقل في الظهور والتوفر للأقسام والمنتجات. التغييرات تُحفظ مباشرة في قاعدة البيانات وتنعكس على الموقع بعد التحديث.</div>
             </div>
           )}
 

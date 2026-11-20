@@ -42,3 +42,28 @@
     padding-inline: var(--space-3);
   }
 }
+
+
+.category-filter__button--unavailable {
+  border-color: #e0b4b4;
+  background-color: #fff7f7;
+  color: #7a2e2e;
+}
+
+.category-filter__button--unavailable[aria-pressed='true'] {
+  border-color: #7a2e2e;
+  background-color: #7a2e2e;
+  color: #fff;
+}
+
+.category-filter__badge {
+  display: inline-flex;
+  margin-inline-start: 0.4rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background-color: rgba(122, 46, 46, 0.12);
+  color: inherit;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.4;
+}

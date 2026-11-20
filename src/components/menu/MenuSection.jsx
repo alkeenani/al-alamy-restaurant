@@ -7,12 +7,11 @@ import './MenuSection.css'
 const INQUIRY_ONLY_SERVICES = [
   {
     id: 'inquiry-outdoor-external-meals',
-    name: 'تسوية وجبات خارجية حسب الكمية',
-    description: 'خدمة تسوية الوجبات الخارجية. السعر بيتحدد حسب الكمية ونوع الطلب. تواصل معنا عبر واتساب لمعرفة التفاصيل.',
+    name: 'شواء خارجي ووجبات خارج القائمة',
+    description: 'خدمة شواء ووجبات حسب الطلب. السعر يُحدد عند الاستفسار عبر واتساب.',
     category: OUTDOOR_GRILL_CATEGORY_ID,
     categoryId: OUTDOOR_GRILL_CATEGORY_ID,
     isInquiryOnly: true,
-    isAvailable: true,
     sortOrder: 999,
   },
 ]
@@ -53,9 +52,16 @@ function MenuSection({
       ? activeCategory
       : (menuCategories[0]?.id || '')
 
-  const activeInquiryServices = INQUIRY_ONLY_SERVICES.filter(
-    (s) => menuCategories.some((c) => c.id === s.categoryId),
-  )
+  const activeCategoryObj = menuCategories.find((c) => c.id === effectiveActiveCategory) || null
+  const categoryUnavailable = activeCategoryObj ? activeCategoryObj.isAvailable === false : false
+
+  const activeInquiryServices = INQUIRY_ONLY_SERVICES
+    .filter((s) => menuCategories.some((c) => c.id === s.categoryId))
+    .map((s) => {
+      const cat = menuCategories.find((c) => c.id === s.categoryId)
+      const orderable = cat ? cat.isAvailable !== false : false
+      return { ...s, isAvailable: orderable, isOrderable: orderable, categoryAvailable: orderable }
+    })
   const mergedProducts = [...products, ...activeInquiryServices]
 
   const displayedProducts = effectiveActiveCategory
@@ -69,7 +75,7 @@ function MenuSection({
           <div>
             <p className="menu-section__eyebrow">قائمتنا</p>
             <h2 className="menu-section__title" id="menu-title">
-              المنيو
+              اختر طلبك
             </h2>
           </div>
         </div>
@@ -85,6 +91,11 @@ function MenuSection({
               activeCategory={effectiveActiveCategory}
               onSelect={setActiveCategory}
             />
+            {categoryUnavailable ? (
+              <p className="menu-section__notice menu-section__notice--warning" role="status">
+                هذا القسم ظاهر للعرض لكنه <strong>غير متوفر حاليًا</strong>، ولا يمكن الطلب منه مؤقتًا.
+              </p>
+            ) : null}
             <p className="visually-hidden" aria-live="polite">
               {displayedProducts.length} صنفاً معروضاً
             </p>

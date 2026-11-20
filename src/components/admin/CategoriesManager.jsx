@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import AdminModal from './AdminModal.jsx'
 import { createCategory, deleteCategory, mapSupabaseError, slugify, updateCategory } from '../../lib/menuApi.js'
 
-const emptyForm = { name: '', slug: '', is_active: true, sort_order: 0 }
+const emptyForm = { name: '', slug: '', is_active: true, is_available: true, sort_order: 0 }
 
 export default function CategoriesManager({ data, loading, refresh, showToast }) {
   const [modalOpen, setModalOpen] = useState(false)
@@ -28,7 +28,7 @@ export default function CategoriesManager({ data, loading, refresh, showToast })
   }
   function openEdit(cat) {
     setEditing(cat)
-    setForm({ name: cat.name || '', slug: cat.slug || '', is_active: !!cat.is_active, sort_order: Number(cat.sort_order ?? 0) })
+    setForm({ name: cat.name || '', slug: cat.slug || '', is_active: cat.is_active !== false, is_available: cat.is_available !== false, sort_order: Number(cat.sort_order ?? 0) })
     setModalOpen(true)
   }
   function closeModal() { if (!saving) setModalOpen(false) }
@@ -53,6 +53,7 @@ export default function CategoriesManager({ data, loading, refresh, showToast })
       name: form.name.trim(),
       slug: String(form.slug).trim(),
       is_active: !!form.is_active,
+      is_available: !!form.is_available,
       sort_order: Number(form.sort_order || 0),
     }
     const res = editing ? await updateCategory(editing.id, payload) : await createCategory(payload)
@@ -112,9 +113,10 @@ export default function CategoriesManager({ data, loading, refresh, showToast })
                   <th>الاسم</th>
                   <th>المعرّف (slug)</th>
                   <th>الترتيب</th>
-                  <th>الحالة</th>
+                  <th>الظهور</th>
+                  <th>التوفر</th>
                   <th>المنتجات</th>
-                  <th>إجراءات</th>
+                  <th>الإجراءات</th>
                 </tr>
               </thead>
               <tbody>
@@ -124,8 +126,13 @@ export default function CategoriesManager({ data, loading, refresh, showToast })
                     <td dir="ltr" style={{textAlign:'left'}}>{cat.slug}</td>
                     <td>{cat.sort_order ?? 0}</td>
                     <td>
-                      <span className={`admin-badge ${cat.is_active ? '' : 'admin-badge--muted'}`}>
-                        {cat.is_active ? 'نشط' : 'غير نشط'}
+                      <span className={`admin-badge ${cat.is_active !== false ? '' : 'admin-badge--muted'}`}>
+                        {cat.is_active !== false ? 'ظاهر' : 'مخفي'}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`admin-badge ${cat.is_available !== false ? '' : 'admin-badge--danger'}`}>
+                        {cat.is_available !== false ? 'متوفر' : 'غير متوفر'}
                       </span>
                     </td>
                     <td>{productCountByCategory.get(cat.id) || 0}</td>
@@ -145,7 +152,10 @@ export default function CategoriesManager({ data, loading, refresh, showToast })
               <article key={cat.id} className="admin-list-card">
                 <div className="admin-list-card__head">
                   <div className="admin-list-card__title">{cat.name}</div>
-                  <span className={`admin-badge ${cat.is_active ? '' : 'admin-badge--muted'}`}>{cat.is_active ? 'نشط' : 'غير نشط'}</span>
+                  <div className="admin-inline" style={{gap:'.35rem', flexWrap:'wrap', justifyContent:'flex-end'}}>
+                    <span className={`admin-badge ${cat.is_active !== false ? '' : 'admin-badge--muted'}`}>{cat.is_active !== false ? 'ظاهر' : 'مخفي'}</span>
+                    <span className={`admin-badge ${cat.is_available !== false ? '' : 'admin-badge--danger'}`}>{cat.is_available !== false ? 'متوفر' : 'غير متوفر'}</span>
+                  </div>
                 </div>
                 <div className="admin-list-card__meta">
                   <div className="admin-list-card__meta-row"><span>المعرّف (slug)</span><span dir="ltr">{cat.slug}</span></div>
@@ -190,10 +200,16 @@ export default function CategoriesManager({ data, loading, refresh, showToast })
             <label htmlFor="cat-sort">ترتيب العرض</label>
             <input id="cat-sort" className="admin-input" type="number" value={form.sort_order} onChange={e=>setForm(f=>({...f, sort_order: e.target.value}))} />
           </div>
-          <label className="admin-check" style={{gridColumn:'1 / -1'}}>
-            <input type="checkbox" checked={form.is_active} onChange={e=>setForm(f=>({...f, is_active: e.target.checked}))} />
-            قسم نشط (يظهر في القائمة العامة)
-          </label>
+          <div className="admin-grid-2" style={{gridColumn:'1 / -1'}}>
+            <label className="admin-check">
+              <input type="checkbox" checked={form.is_active} onChange={e=>setForm(f=>({...f, is_active: e.target.checked}))} />
+              ظاهر في الموقع (إلغاء التحديد = مخفي)
+            </label>
+            <label className="admin-check">
+              <input type="checkbox" checked={form.is_available} onChange={e=>setForm(f=>({...f, is_available: e.target.checked}))} />
+              متوفر للطلب (إلغاء التحديد = غير متوفر حاليًا)
+            </label>
+          </div>
         </form>
       </AdminModal>
 

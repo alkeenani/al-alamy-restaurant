@@ -267,3 +267,20 @@
 .product-card__whatsapp {
   text-decoration: none;
 }
+
+
+.product-card--unavailable {
+  opacity: 0.92;
+}
+
+.product-card__unavailable-note {
+  margin-block-start: 0.35rem;
+  color: var(--color-danger, #b42318);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.product-card__option:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

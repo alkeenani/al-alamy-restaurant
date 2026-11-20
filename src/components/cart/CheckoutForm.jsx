@@ -4,6 +4,7 @@ import {
   buildOrderMessageText,
   buildWhatsAppUrl,
 } from '../../lib/whatsapp.js'
+import { fetchPublicMenu } from '../../lib/menuApi.js'
 import { WhatsAppIcon } from '../common/Icons.jsx'
 import './CheckoutForm.css'
 
@@ -82,6 +83,7 @@ function CheckoutForm({ items, showToast }) {
   const [form, setForm] = useState(() => ({ ...initialForm, ...(readSavedCustomerInfo() || {}) }))
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -107,7 +109,8 @@ function CheckoutForm({ items, showToast }) {
     }
   }
 
-  function handleSubmit(event) {
+
+  async function handleSubmit(event) {
     event.preventDefault()
 
     const nextErrors = validate(form)
@@ -121,21 +124,46 @@ function CheckoutForm({ items, showToast }) {
       return
     }
 
-    const orderMessage = buildOrderMessageText({ customer: form, items })
-    const whatsappUrl = buildWhatsAppUrl(
-      restaurantInfo.whatsappInternational,
-      orderMessage,
-    )
+    setSubmitting(true)
+    try {
+      const { data, error } = await fetchPublicMenu()
+      if (error || !data) {
+        showToast('تعذر التحقق من توفر المنتجات الآن. حاول مرة أخرى.', 'error')
+        setStatus('')
+        return
+      }
 
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
-    setStatus(
-      'تم تجهيز تفاصيل الطلب وفتح واتساب مع الرسالة. إذا لم يتم الإرسال تلقائيًا اضغط إرسال.',
-    )
-    showToast(
-      'تم تجهيز تفاصيل الطلب وفتح واتساب مع الرسالة.',
-      'success',
-    )
+      const orderableIds = new Set((data.products || []).filter(p => p.isOrderable !== false).map(p => p.id))
+      const invalidItems = (items || []).filter((it) => !orderableIds.has(it.productId))
+
+      if (invalidItems.length > 0) {
+        const msg = 'بعض المنتجات في السلة أصبحت غير متوفرة أو مخفية. يرجى تحديث السلة قبل إتمام الطلب.'
+        showToast(msg, 'error')
+        setStatus(msg)
+        return
+      }
+
+      if (!items || items.length === 0) {
+        const msg = 'لا توجد منتجات متاحة للطلب في السلة.'
+        showToast(msg, 'error')
+        setStatus(msg)
+        return
+      }
+
+      const orderMessage = buildOrderMessageText({ customer: form, items })
+      const whatsappUrl = buildWhatsAppUrl(
+        restaurantInfo.whatsappInternational,
+        orderMessage,
+      )
+
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+      setStatus('تم تجهيز رسالة الطلب وفتح واتساب. إذا لم تُفتح النافذة، يرجى السماح بالنوافذ المنبثقة ثم المحاولة مرة أخرى.')
+      showToast('تم تجهيز الطلب وفتح واتساب.', 'success')
+    } finally {
+      setSubmitting(false)
+    }
   }
+
 
   return (
     <form
@@ -302,9 +330,9 @@ function CheckoutForm({ items, showToast }) {
         </div>
       </div>
 
-      <button type="submit" className="checkout-form__submit">
+      <button type="submit" className="checkout-form__submit" disabled={submitting}>
         <WhatsAppIcon size={18} />
-        <span>إرسال الطلب</span>
+        <span>{submitting ? 'جارٍ التحقق...' : 'إرسال الطلب عبر واتساب'}</span>
       </button>
       <p className="checkout-form__note">
         سيتم فتح واتساب مع رسالة جاهزة بالتفاصيل. إذا لم يفتح تلقائيًا راجع إعدادات المتصفح.

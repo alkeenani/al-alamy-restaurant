@@ -15,6 +15,7 @@ function emptyProductForm(categories) {
     description: '',
     category_id: categories[0]?.id || '',
     base_price: '',
+    is_active: true,
     is_available: true,
     sort_order: 0,
   }
@@ -126,6 +127,7 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
       description: p.description || '',
       category_id: p.category_id || categories[0]?.id || '',
       base_price: String(p.base_price ?? ''),
+      is_active: p.is_active !== false,
       is_available: !!p.is_available,
       sort_order: Number(p.sort_order ?? 0),
     })
@@ -203,6 +205,7 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
       description: form.description.trim() || null,
       category_id: form.category_id,
       base_price: Number(form.base_price),
+      is_active: !!form.is_active,
       is_available: !!form.is_available,
       sort_order: Number(form.sort_order || 0),
     }
@@ -290,18 +293,18 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
     <div>
       <div className="admin-toolbar">
         <button type="button" className="admin-btn admin-btn--primary" onClick={openCreate} disabled={!categories.length}>إضافة منتج</button>
-        <input className="admin-input admin-toolbar__control" placeholder="بحث باسم المنتج…" value={search} onChange={e=>setSearch(e.target.value)} />
+        <input className="admin-input admin-toolbar__control" placeholder="ابحث باسم المنتج..." value={search} onChange={e=>setSearch(e.target.value)} />
         <select className="admin-select admin-toolbar__control" value={filterCategory} onChange={e=>setFilterCategory(e.target.value)}>
           <option value="all">كل الأقسام</option>
-          {categories.map(c => <option key={c.id} value={c.id}>{c.name}{c.is_active ? '' : ' (غير نشط)'}</option>)}
+          {categories.map(c => <option key={c.id} value={c.id}>{c.name}{c.is_active !== false ? '' : ' (مخفي)'}</option>)}
         </select>
         <select className="admin-select admin-toolbar__control" value={filterAvail} onChange={e=>setFilterAvail(e.target.value)}>
-          <option value="all">الكل</option>
-          <option value="available">متاح</option>
-          <option value="unavailable">غير متاح</option>
+          <option value="all">كل حالات التوفر</option>
+          <option value="available">متوفر</option>
+          <option value="unavailable">غير متوفر</option>
         </select>
       </div>
-      {!categories.length ? <div className="admin-empty">لا توجد أقسام. أضف قسماً أولاً لتتمكن من إضافة المنتجات.</div> : null}
+      {!categories.length ? <div className="admin-empty">لا توجد أقسام. أضف قسمًا أولًا قبل إنشاء المنتجات.</div> : null}
 
       {!filtered.length ? (
         <div className="admin-empty">لا توجد منتجات مطابقة.</div>
@@ -315,8 +318,9 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
                   <th>القسم</th>
                   <th>السعر الأساسي</th>
                   <th>الترتيب</th>
-                  <th>الحالة</th>
-                  <th>إجراءات</th>
+                  <th>الظهور</th>
+                  <th>التوفر</th>
+                  <th>الإجراءات</th>
                 </tr>
               </thead>
               <tbody>
@@ -329,7 +333,8 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
                     <td>{categoryMap.get(p.category_id)?.name || '-'}</td>
                     <td>{Number(p.base_price)} ج.م</td>
                     <td>{p.sort_order ?? 0}</td>
-                    <td><span className={`admin-badge ${p.is_available ? '' : 'admin-badge--muted'}`}>{p.is_available ? 'متاح' : 'غير متاح'}</span></td>
+                    <td><span className={`admin-badge ${p.is_active !== false ? '' : 'admin-badge--muted'}`}>{p.is_active !== false ? 'ظاهر' : 'مخفي'}</span></td>
+                    <td><span className={`admin-badge ${p.is_available ? '' : 'admin-badge--danger'}`}>{p.is_available ? 'متوفر' : 'غير متوفر'}</span></td>
                     <td>
                       <div className="admin-row-actions">
                         <button type="button" className="admin-btn" onClick={()=>openEdit(p)}>تعديل</button>
@@ -349,7 +354,10 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
                     <div className="admin-list-card__title">{p.name}</div>
                     {p.description ? <div className="admin-help" style={{marginTop:'.25rem'}}>{p.description}</div> : null}
                   </div>
-                  <span className={`admin-badge ${p.is_available ? '' : 'admin-badge--muted'}`}>{p.is_available ? 'متاح' : 'غير متاح'}</span>
+                  <div className="admin-inline" style={{gap:'.35rem', flexWrap:'wrap', justifyContent:'flex-end'}}>
+                    <span className={`admin-badge ${p.is_active !== false ? '' : 'admin-badge--muted'}`}>{p.is_active !== false ? 'ظاهر' : 'مخفي'}</span>
+                    <span className={`admin-badge ${p.is_available ? '' : 'admin-badge--danger'}`}>{p.is_available ? 'متوفر' : 'غير متوفر'}</span>
+                  </div>
                 </div>
                 <div className="admin-list-card__meta">
                   <div className="admin-list-card__meta-row"><span>القسم</span><span>{categoryMap.get(p.category_id)?.name || '-'}</span></div>
@@ -373,7 +381,7 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
         footer={(
           <>
             <button type="button" className="admin-btn" onClick={closeModal} disabled={saving}>إلغاء</button>
-            <button type="submit" form="product-form" className="admin-btn admin-btn--primary" disabled={saving}>{saving ? 'جاري الحفظ…' : 'حفظ المنتج'}</button>
+            <button type="submit" form="product-form" className="admin-btn admin-btn--primary" disabled={saving}>{saving ? 'جارٍ الحفظ...' : 'حفظ المنتج'}</button>
           </>
         )}
       >
@@ -391,7 +399,7 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
               <label htmlFor="p-cat">القسم</label>
               <select id="p-cat" className="admin-select" value={form.category_id} onChange={e=>setForm(f=>({...f,category_id:e.target.value}))}>
                 <option value="">اختر القسم</option>
-                {categories.map(c => <option key={c.id} value={c.id}>{c.name}{c.is_active ? '' : ' (غير نشط)'}</option>)}
+                {categories.map(c => <option key={c.id} value={c.id}>{c.name}{c.is_active !== false ? '' : ' (مخفي)'}</option>)}
               </select>
             </div>
             <div className="admin-field">
@@ -402,18 +410,24 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
               <label htmlFor="p-sort">ترتيب العرض</label>
               <input id="p-sort" className="admin-input" type="number" value={form.sort_order} onChange={e=>setForm(f=>({...f,sort_order:e.target.value}))} />
             </div>
-            <label className="admin-check" style={{alignSelf:'end', paddingBottom:'.6rem'}}>
-              <input type="checkbox" checked={form.is_available} onChange={e=>setForm(f=>({...f,is_available:e.target.checked}))} />
-              المنتج متاح للطلب
-            </label>
+            <div className="admin-grid-2" style={{gridColumn:'1 / -1'}}>
+              <label className="admin-check">
+                <input type="checkbox" checked={form.is_active} onChange={e=>setForm(f=>({...f,is_active:e.target.checked}))} />
+                ظاهر في الموقع (إلغاء التحديد = مخفي)
+              </label>
+              <label className="admin-check">
+                <input type="checkbox" checked={form.is_available} onChange={e=>setForm(f=>({...f,is_available:e.target.checked}))} />
+                متوفر للطلب (إلغاء التحديد = غير متوفر)
+              </label>
+            </div>
           </div>
 
           <div className="admin-divider" />
           <div className="admin-inline" style={{justifyContent:'space-between', marginBottom:'.5rem'}}>
-            <h3 className="admin-subsection-title" style={{margin:0}}>مجموعات الخيارات</h3>
+            <h3 className="admin-subsection-title" style={{margin:0}}>خيارات المنتج</h3>
             <button type="button" className="admin-btn admin-btn--accent" onClick={addGroup}>إضافة مجموعة خيارات</button>
           </div>
-          <p className="admin-help" style={{marginBottom:'.75rem'}}>يمكنك إضافة مجموعة واحدة أو أكثر (مثل الحجم، نوع الخبز، الإضافات) أو ترك المنتج بدون خيارات.</p>
+          <p className="admin-help" style={{marginBottom:'.75rem'}}>أضف مجموعات مثل الحجم أو النوع، مع قيم وأسعار لكل قيمة عند الحاجة.</p>
 
           {draftGroups.length === 0 ? <div className="admin-empty">لا توجد مجموعات خيارات لهذا المنتج.</div> : null}
 
@@ -575,12 +589,12 @@ export default function ProductsManager({ data, loading, refresh, showToast }) {
         footer={(
           <>
             <button type="button" className="admin-btn" onClick={()=>setConfirmTarget(null)} disabled={deleting}>إلغاء</button>
-            <button type="button" className="admin-btn admin-btn--danger" onClick={confirmDelete} disabled={deleting}>{deleting ? 'جاري الحذف…' : 'حذف نهائي'}</button>
+            <button type="button" className="admin-btn admin-btn--danger" onClick={confirmDelete} disabled={deleting}>{deleting ? 'جارٍ الحذف...' : 'حذف المنتج'}</button>
           </>
         )}
       >
         <p>هل أنت متأكد من حذف المنتج "{confirmTarget?.name}"؟</p>
-        <p className="admin-help" style={{marginTop:'.5rem'}}>إذا كان المنتج مرتبطاً بطلبات سابقة قد يمنع النظام الحذف. في هذه الحالة يمكنك جعله "غير متاح" بدلاً من الحذف.</p>
+        <p className="admin-help" style={{marginTop:'.5rem'}}>سيتم حذف المنتج وخياراته المرتبطة. لإخفائه مؤقتًا استخدم خيار "مخفي" بدلاً من الحذف.</p>
       </AdminModal>
     </div>
   )

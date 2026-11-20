@@ -5,19 +5,23 @@ function CategoryFilter({ categories, activeCategory, onSelect }) {
     <div
       className="category-filter"
       role="group"
-      aria-label="????? ???????? ??? ?????"
+      aria-label="تصفية الأقسام حسب الفئة"
     >
-      {categories.map((category) => (
-        <button
-          key={category.id}
-          type="button"
-          className="category-filter__button"
-          aria-pressed={category.id === activeCategory}
-          onClick={() => onSelect(category.id)}
-        >
-          {category.label}
-        </button>
-      ))}
+      {categories.map((category) => {
+        const unavailable = category.isAvailable === false
+        return (
+          <button
+            key={category.id}
+            type="button"
+            className={`category-filter__button${unavailable ? ' category-filter__button--unavailable' : ''}`}
+            aria-pressed={category.id === activeCategory}
+            onClick={() => onSelect(category.id)}
+          >
+            <span>{category.label}</span>
+            {unavailable ? <span className="category-filter__badge">غير متوفر حاليًا</span> : null}
+          </button>
+        )
+      })}
     </div>
   )
 }

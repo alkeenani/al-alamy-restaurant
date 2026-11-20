@@ -80,13 +80,18 @@ export function buildPublicMenu(categories, products, groups, values, combos, co
   }
   for (const arr of groupsByProduct.values()) arr.sort(sortByOrderThenCreated)
 
-  const activeCategories = (categories || []).filter(c => c.is_active).sort(sortByOrderThenCreated)
+  // Visibility vs availability are independent:
+  // categories: is_active = ظاهر/مخفي, is_available = متوفر/غير متوفر حاليًا
+  // products:   is_active = ظاهر/مخفي, is_available = متوفر/غير متوفر
+  const visibleCategories = (categories || [])
+    .filter(c => c.is_active !== false)
+    .sort(sortByOrderThenCreated)
 
   const productsById = new Map()
   for (const p of products || []) {
-    if (!p.is_available) continue
+    if (p.is_active === false) continue
     const cat = (categories || []).find(c => c.id === p.category_id)
-    if (!cat || !cat.is_active) continue
+    if (!cat || cat.is_active === false) continue
 
     const pGroups = (groupsByProduct.get(p.id) || []).map(g => {
       const gValues = (valuesByGroup.get(g.id) || []).filter(v => v.is_available !== false)
@@ -112,7 +117,6 @@ export function buildPublicMenu(categories, products, groups, values, combos, co
     for (const combo of (combosByProduct.get(p.id) || [])) {
       const ids = comboValueIdsByCombo.get(combo.id) || []
       if (ids.length === 0) continue
-      // build key by group order using selected values
       const selected = []
       for (const g of pGroups) {
         const vid = ids.find(id => g.values.some(v => v.id === id))
@@ -123,6 +127,8 @@ export function buildPublicMenu(categories, products, groups, values, combos, co
       priceMatrix[key] = Number(combo.price)
     }
 
+    const productAvailable = p.is_available !== false
+    const categoryAvailable = cat.is_available !== false
     productsById.set(p.id, {
       id: p.id,
       name: p.name,
@@ -130,15 +136,17 @@ export function buildPublicMenu(categories, products, groups, values, combos, co
       category: p.category_id,
       categoryId: p.category_id,
       categoryLabel: cat.name,
+      categoryAvailable,
       price: Number(p.base_price),
       basePrice: Number(p.base_price),
-      isAvailable: !!p.is_available,
+      isVisible: true,
+      isAvailable: productAvailable,
+      isOrderable: productAvailable && categoryAvailable,
       sortOrder: p.sort_order ?? 0,
       options: pGroups.map(g => ({
         id: g.id,
         label: g.name,
         required: g.required,
-        // use adjustment mode with base_price + price_delta; combinations override via priceMatrix
         priceMode: 'adjustment',
         values: g.values.map(v => ({ id: v.id, label: v.name, priceDelta: v.priceDelta })),
         minSelect: g.minSelect,
@@ -149,14 +157,24 @@ export function buildPublicMenu(categories, products, groups, values, combos, co
   }
 
   const menuProducts = Array.from(productsById.values()).sort(sortByOrderThenCreated)
-  const menuCategories = activeCategories.map(c => ({ id: c.id, label: c.name, slug: c.slug, sortOrder: c.sort_order ?? 0 }))
+  const menuCategories = visibleCategories.map(c => ({
+    id: c.id,
+    label: c.name,
+    slug: c.slug,
+    sortOrder: c.sort_order ?? 0,
+    isActive: c.is_active !== false,
+    isAvailable: c.is_available !== false,
+  }))
   return { categories: menuCategories, products: menuProducts }
 }
 
 export async function fetchPublicMenu() {
+  // Fetch public menu. Visibility/availability are applied in buildPublicMenu
+  // with safe defaults (missing columns => visible/available), so this works
+  // before and after the visibility/availability migration.
   const [catRes, prodRes, groupRes, valueRes, comboRes, cvRes] = await Promise.all([
-    supabase.from('categories').select('*').eq('is_active', true).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
-    supabase.from('products').select('*').eq('is_available', true).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
+    supabase.from('categories').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
+    supabase.from('products').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
     supabase.from('product_option_groups').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
     supabase.from('product_option_values').select('*').eq('is_available', true).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
     supabase.from('product_option_combinations').select('*'),
@@ -169,7 +187,6 @@ export async function fetchPublicMenu() {
   const menu = buildPublicMenu(catRes.data, prodRes.data, groupRes.data, valueRes.data, comboRes.data, cvRes.data)
   return { data: menu, error: null }
 }
-
 export async function fetchAdminMenuData() {
   const [catRes, prodRes, groupRes, valueRes, comboRes, cvRes] = await Promise.all([
     supabase.from('categories').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
@@ -195,8 +212,8 @@ export async function fetchAdminMenuData() {
 }
 
 // Categories
-export async function createCategory({ name, slug, is_active = true, sort_order = 0 }) {
-  return supabase.from('categories').insert({ name, slug, is_active, sort_order }).select('*').single()
+export async function createCategory({ name, slug, is_active = true, is_available = true, sort_order = 0 }) {
+  return supabase.from('categories').insert({ name, slug, is_active, is_available, sort_order }).select('*').single()
 }
 export async function updateCategory(id, patch) {
   return supabase.from('categories').update(patch).eq('id', id).select('*').single()
@@ -353,12 +370,11 @@ export async function ensureRequiredSandwichProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     .eq('category_id', SANDWICHES_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
-  const requiredNames = new Set(REQUIRED_SANDWICH_PRODUCTS.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
   const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
@@ -370,7 +386,6 @@ export async function ensureRequiredSandwichProducts() {
     const patch = {}
     if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
     if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
-    if (found.is_available !== true) patch.is_available = true
     if (Object.keys(patch).length) {
       const upRes = await updateProduct(found.id, patch)
       if (upRes.error) { report.errors.push({ name: req.name, action: 'update', error: upRes.error }); return { data: { report }, error: upRes.error, report } }
@@ -384,24 +399,16 @@ export async function ensureRequiredSandwichProducts() {
   const toInsert = []
   REQUIRED_SANDWICH_PRODUCTS.forEach((req, idx) => {
     if (!existingByName.get(req.name)) {
-      toInsert.push({ name: req.name, base_price: req.base_price, category_id: SANDWICHES_CATEGORY_ID, is_available: true, description: req.description ?? null, sort_order: maxSort + 1 + idx })
+      toInsert.push({ name: req.name, base_price: req.base_price, category_id: SANDWICHES_CATEGORY_ID, is_active: true, is_available: true, description: req.description ?? null, sort_order: maxSort + 1 + idx })
     }
   })
   if (toInsert.length) {
-    const { data: inserted, error: insertError } = await supabase.from('products').insert(toInsert).select('id,name,base_price,category_id,sort_order,is_available,description')
+    const { data: inserted, error: insertError } = await supabase.from('products').insert(toInsert).select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     if (insertError) { report.errors.push({ action: 'insert', error: insertError }); return { data: { report }, error: insertError, report } }
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
   }
 
-  // Remove not in required (e.g. old items not matching PDF). Be careful: do not remove items user wants? But requirement says "Remove products that are no longer listed in the new PDF." so yes.
-  for (const p of existing || []) {
-    if (!requiredNames.has(p.name)) {
-      const delRes = await deleteProduct(p.id)
-      if (delRes.error) { report.errors.push({ name: p.name, action: 'delete', error: delRes.error }); return { data: { report }, error: delRes.error, report } }
-      report.removed = report.removed || []
-      report.removed.push({ id: p.id, name: p.name })
-    }
-  }
+  // Preserve existing products/categories. Do not delete items not in the required list during sync.
 
   const error = report.errors[0]?.error || null
   return { data: { report }, error, report }
@@ -415,12 +422,11 @@ export async function ensureRequiredCrepeProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     .eq('category_id', CREPES_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
-  const requiredNames = new Set(REQUIRED_CREPE_PRODUCTS.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
   const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
@@ -431,7 +437,6 @@ export async function ensureRequiredCrepeProducts() {
     const patch = {}
     if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
     if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
-    if (found.is_available !== true) patch.is_available = true
     if (Object.keys(patch).length) {
       const upRes = await updateProduct(found.id, patch)
       if (upRes.error) { report.errors.push({ name: req.name, action: 'update', error: upRes.error }); return { data: { report }, error: upRes.error, report } }
@@ -444,23 +449,16 @@ export async function ensureRequiredCrepeProducts() {
   const toInsert = []
   REQUIRED_CREPE_PRODUCTS.forEach((req, idx) => {
     if (!existingByName.get(req.name)) {
-      toInsert.push({ name: req.name, base_price: req.base_price, category_id: CREPES_CATEGORY_ID, is_available: true, description: req.description ?? null, sort_order: maxSort + 1 + idx })
+      toInsert.push({ name: req.name, base_price: req.base_price, category_id: CREPES_CATEGORY_ID, is_active: true, is_available: true, description: req.description ?? null, sort_order: maxSort + 1 + idx })
     }
   })
   if (toInsert.length) {
-    const { data: inserted, error: insertError } = await supabase.from('products').insert(toInsert).select('id,name,base_price,category_id,sort_order,is_available,description')
+    const { data: inserted, error: insertError } = await supabase.from('products').insert(toInsert).select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     if (insertError) { report.errors.push({ action: 'insert', error: insertError }); return { data: { report }, error: insertError, report } }
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
   }
 
-  for (const p of existing || []) {
-    if (!requiredNames.has(p.name)) {
-      const delRes = await deleteProduct(p.id)
-      if (delRes.error) { report.errors.push({ name: p.name, action: 'delete', error: delRes.error }); return { data: { report }, error: delRes.error, report } }
-      report.removed = report.removed || []
-      report.removed.push({ id: p.id, name: p.name })
-    }
-  }
+  // Preserve existing products. Do not delete items not in the required list during sync.
 
   const error = report.errors[0]?.error || null
   return { data: { report }, error, report }
@@ -474,35 +472,28 @@ export async function ensureRequiredPizzaProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     .eq('category_id', PIZZA_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
-  const requiredNames = new Set(REQUIRED_PIZZA_PRODUCTS.map((r) => r.name))
   const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
 
   // 1) Rename old "كرنشي رانش" -> "تشيكن رانش" if present and new name not present (preserve id)
   const oldCrunchy = (existing || []).find((p) => p.name === 'كرنشي رانش')
   const hasNewName = (existing || []).some((p) => p.name === 'تشيكن رانش')
   if (oldCrunchy && !hasNewName) {
-    const upRes = await updateProduct(oldCrunchy.id, { name: 'تشيكن رانش', base_price: 145, is_available: true, description: oldCrunchy.description ?? null })
+    const upRes = await updateProduct(oldCrunchy.id, { name: 'تشيكن رانش', base_price: 145, description: oldCrunchy.description ?? null })
     if (upRes.error) {
       report.errors.push({ name: 'كرنشي رانش->تشيكن رانش', action: 'rename', error: upRes.error })
       return { data: { report }, error: upRes.error, report }
     }
     report.updated.push({ id: oldCrunchy.id, name: 'تشيكن رانش (renamed from كرنشي رانش)' })
-  } else if (oldCrunchy && hasNewName && oldCrunchy.id !== (existing || []).find((p) => p.name === 'تشيكن رانش')?.id) {
-    // both exist: delete the old duplicate, keep the existing "تشيكن رانش" record
-    const delRes = await deleteProduct(oldCrunchy.id)
-    if (delRes.error) {
-      report.errors.push({ name: 'كرنشي رانش', action: 'delete-duplicate', error: delRes.error })
-      return { data: { report }, error: delRes.error, report }
-    }
-    report.removed.push({ id: oldCrunchy.id, name: 'كرنشي رانش (duplicate removed)' })
-  } else if (oldCrunchy && hasNewName && oldCrunchy.id === (existing || []).find((p) => p.name === 'تشيكن رانش')?.id) {
+  } else if (oldCrunchy && hasNewName && oldCrunchy.id !== (existing || []).find((p) => p.name === 'بيتزا تشيكن')?.id) {
+    // Preserve existing records (no deletions during sync).
+  } else if (oldCrunchy && hasNewName && oldCrunchy.id === (existing || []).find((p) => p.name === 'بيتزا تشيكن')?.id) {
     // same record already named correctly (shouldn't happen), just ensure price
-    const upRes = await updateProduct(oldCrunchy.id, { base_price: 145, is_available: true })
+    const upRes = await updateProduct(oldCrunchy.id, { base_price: 145 })
     if (upRes.error) {
       report.errors.push({ name: 'تشيكن رانش', action: 'update', error: upRes.error })
       return { data: { report }, error: upRes.error, report }
@@ -512,7 +503,7 @@ export async function ensureRequiredPizzaProducts() {
   // Re-fetch after possible rename/delete to be safe
   const { data: existing2, error: fetchError2 } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     .eq('category_id', PIZZA_CATEGORY_ID)
   if (fetchError2) return { data: null, error: fetchError2, report: null }
 
@@ -526,7 +517,6 @@ export async function ensureRequiredPizzaProducts() {
     const patch = {}
     if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
     if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
-    if (found.is_available !== true) patch.is_available = true
     if (Object.keys(patch).length) {
       const upRes = await updateProduct(found.id, patch)
       if (upRes.error) {
@@ -547,6 +537,7 @@ export async function ensureRequiredPizzaProducts() {
         name: req.name,
         base_price: req.base_price,
         category_id: PIZZA_CATEGORY_ID,
+        is_active: true,
         is_available: true,
         description: req.description ?? null,
         sort_order: maxSort2 + 1 + idx,
@@ -557,7 +548,7 @@ export async function ensureRequiredPizzaProducts() {
     const { data: inserted, error: insertError } = await supabase
       .from('products')
       .insert(toInsert)
-      .select('id,name,base_price,category_id,sort_order,is_available,description')
+      .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     if (insertError) {
       report.errors.push({ action: 'insert', error: insertError })
       return { data: { report }, error: insertError, report }
@@ -565,21 +556,7 @@ export async function ensureRequiredPizzaProducts() {
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
   }
 
-  // 4) Remove any pizza products not in required set (only this category)
-  const { data: existing3 } = await supabase
-    .from('products')
-    .select('id,name')
-    .eq('category_id', PIZZA_CATEGORY_ID)
-  for (const p of existing3 || []) {
-    if (!requiredNames.has(p.name)) {
-      const delRes = await deleteProduct(p.id)
-      if (delRes.error) {
-        report.errors.push({ name: p.name, action: 'delete', error: delRes.error })
-        return { data: { report }, error: delRes.error, report }
-      }
-      report.removed.push({ id: p.id, name: p.name })
-    }
-  }
+  // Preserve existing products. Do not delete items not in the required list during sync.
 
   const error = report.errors[0]?.error || null
   return { data: { report }, error, report }
@@ -593,12 +570,11 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     .eq('category_id', categoryId)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
-  const requiredNames = new Set(requiredProducts.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
   const report = { existing: [], added: [], updated: [], removed: [], errors: [] }
@@ -610,7 +586,6 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
     const patch = {}
     if (Number(found.base_price) !== Number(req.base_price)) patch.base_price = req.base_price
     if ((found.description || null) !== (req.description ?? null)) patch.description = req.description ?? null
-    if (found.is_available !== true) patch.is_available = true
     if (Object.keys(patch).length) {
       const upRes = await updateProduct(found.id, patch)
       if (upRes.error) {
@@ -631,6 +606,7 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
         name: req.name,
         base_price: req.base_price,
         category_id: categoryId,
+        is_active: true,
         is_available: true,
         description: req.description ?? null,
         sort_order: maxSort + 1 + idx,
@@ -641,7 +617,7 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
     const { data: inserted, error: insertError } = await supabase
       .from('products')
       .insert(toInsert)
-      .select('id,name,base_price,category_id,sort_order,is_available,description')
+      .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
 
     if (insertError) {
       report.errors.push({ action: 'insert', error: insertError })
@@ -650,17 +626,7 @@ async function ensureSimpleRequiredProducts(categoryId, requiredProducts) {
     report.added = (inserted || []).map((p) => ({ id: p.id, name: p.name, base_price: Number(p.base_price), category_id: p.category_id }))
   }
 
-  // Remove products not in required list (only within this category)
-  for (const p of existing || []) {
-    if (!requiredNames.has(p.name)) {
-      const delRes = await deleteProduct(p.id)
-      if (delRes.error) {
-        report.errors.push({ name: p.name, action: 'delete', error: delRes.error })
-        return { data: { report }, error: delRes.error, report }
-      }
-      report.removed.push({ id: p.id, name: p.name })
-    }
-  }
+  // Preserve existing products. Do not delete items not in the required list during sync.
 
   const error = report.errors[0]?.error || null
   return { data: { report }, error, report }
@@ -682,27 +648,16 @@ export async function ensureRequiredChickenMeatMealProducts() {
 
   const { data: existing, error: fetchError } = await supabase
     .from('products')
-    .select('id,name,base_price,category_id,sort_order,is_available,description')
+    .select('id,name,base_price,category_id,sort_order,is_active,is_available,description')
     .eq('category_id', CHICKEN_MEAT_MEALS_CATEGORY_ID)
 
   if (fetchError) return { data: null, error: fetchError, report: null }
 
-  const requiredNames = new Set(REQUIRED_CHICKEN_MEAT_MEAL_PRODUCTS.map((r) => r.name))
   const existingByName = new Map((existing || []).map((p) => [p.name, p]))
   const maxSort = (existing || []).reduce((m, p) => Math.max(m, Number(p.sort_order ?? 0)), 0)
   const report = { existing: [], added: [], removed: [], errors: [] }
 
-  // Remove obsolete products in this category
-  for (const p of existing || []) {
-    if (!requiredNames.has(p.name)) {
-      const delRes = await deleteProduct(p.id)
-      if (delRes.error) {
-        report.errors.push({ name: p.name, action: 'delete', error: delRes.error })
-        return { data: { report }, error: delRes.error, report }
-      }
-      report.removed.push({ id: p.id, name: p.name })
-    }
-  }
+  // Preserve existing products. Do not delete items not in the required list during sync.
 
   let sortCursor = maxSort + 1
   for (const req of REQUIRED_CHICKEN_MEAT_MEAL_PRODUCTS) {
@@ -729,10 +684,11 @@ export async function ensureRequiredChickenMeatMealProducts() {
       name: req.name,
       base_price: req.base_price,
       category_id: CHICKEN_MEAT_MEALS_CATEGORY_ID,
+      is_active: true,
       is_available: true,
       description: req.description ?? null,
       sort_order: sortCursor++,
-    }).select('id,name,base_price,category_id,sort_order,is_available').single()
+    }).select('id,name,base_price,category_id,sort_order,is_active,is_available').single()
 
     if (prodRes.error) {
       report.errors.push({ name: req.name, action: 'insert', error: prodRes.error })
@@ -785,7 +741,7 @@ export async function ensureRequiredMenuCategories(existingCategories) {
       if (match.name !== required.name) patch.name = required.name
       if (match.slug !== required.slug) patch.slug = required.slug
       if (Number(match.sort_order ?? 0) !== required.sort_order) patch.sort_order = required.sort_order
-      if (match.is_active !== true) patch.is_active = true
+      // Preserve admin-controlled visibility/availability. Never reactivate hidden categories.
 
       if (Object.keys(patch).length) {
         const res = await updateCategory(match.id, patch)
@@ -799,7 +755,7 @@ export async function ensureRequiredMenuCategories(existingCategories) {
         report.existing.push({ id: match.id, name: match.name, slug: match.slug, sort_order: match.sort_order })
       }
     } else {
-      const res = await createCategory({ ...required, is_active: true })
+      const res = await createCategory({ ...required, is_active: true, is_available: true })
       if (res.error) {
         report.errors.push({ name: required.name, action: 'create', error: res.error })
       } else {
@@ -950,3 +906,4 @@ export async function saveProductCombinations(productId, groupsWithSavedValues, 
   }
   return { error: null }
 }
+

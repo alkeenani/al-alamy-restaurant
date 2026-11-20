@@ -46,3 +46,11 @@
     justify-content: space-between;
   }
 }
+
+
+.menu-section__notice--warning {
+  margin-block: var(--space-3) var(--space-4);
+  border-inline-start-color: #c2410c;
+  background-color: #fff7ed;
+  color: #9a3412;
+}

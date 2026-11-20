@@ -22,11 +22,12 @@ function ProductCard({
   const isInquiryOnly = !!product.isInquiryOnly
   const optionGroups = isInquiryOnly ? [] : getProductOptionGroups(product)
   const hasSizeGroup = optionGroups.some((group) => group.kind === 'size')
-  const isAvailable = product.isAvailable !== false
+  const isOrderable = product.isOrderable !== false
+  const categoryUnavailable = product.categoryAvailable === false
   const priceQuote = isInquiryOnly
     ? { isValid: false, price: null, selectedOptions: [], missingGroups: [], message: '' }
     : getProductPriceQuote(product, selections)
-  const canAdd = !isInquiryOnly && isAvailable && priceQuote.isValid
+  const canAdd = !isInquiryOnly && isOrderable && priceQuote.isValid
   const cartKey = !isInquiryOnly && priceQuote.isValid
     ? buildCartKey(product.id, priceQuote.selectedOptions)
     : null
@@ -43,18 +44,18 @@ function ProductCard({
     !isInquiryOnly && !priceQuote.isValid && priceQuote.missingGroups.length === 0
 
   if (isInquiryOnly) {
-    const message = `مرحبًا، أرغب في الاستفسار عن خدمة: ${product.name}\nمن فضلك أود تحديد نوع التسوية والكمية المطلوبة.`
+    const message = `استفسار بخصوص خدمة: ${product.name}\nأرغب في معرفة السعر والتفاصيل المتاحة.`
     const whatsappHref = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`
 
     return (
       <article
-        className="product-card product-card--inquiry"
+        className={`product-card product-card--inquiry${!isOrderable ? ' product-card--unavailable' : ''}`}
         data-product-id={product.id}
       >
         <div className="product-card__body">
-          <span className="product-card__availability product-card__availability--inquiry">
+          <span className={`product-card__availability ${isOrderable ? 'product-card__availability--inquiry' : 'product-card__availability--unavailable'}`}>
             <span className="product-card__availability-dot" aria-hidden="true" />
-            خدمة حسب الكمية
+            {isOrderable ? 'خدمة حسب الطلب' : 'غير متوفر حاليًا'}
           </span>
           <h3 className="product-card__name">{product.name}</h3>
           {product.description ? (
@@ -64,17 +65,23 @@ function ProductCard({
 
         <div className="product-card__footer">
           <p className="product-card__price" aria-live="polite">
-            <span className="product-card__price-prompt">السعر بيتحدد حسب الكمية ونوع الطلب</span>
+            <span className="product-card__price-prompt">{isOrderable ? 'السعر يُحدد عند الاستفسار' : 'غير متوفر حاليًا'}</span>
           </p>
-          <a
-            className="product-card__add product-card__whatsapp"
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`تواصل عبر واتساب للاستفسار عن ${product.name}`}
-          >
-            <span>تواصل عبر واتساب</span>
-          </a>
+          {isOrderable ? (
+            <a
+              className="product-card__add product-card__whatsapp"
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`استفسار عبر واتساب عن ${product.name}`}
+            >
+              <span>استفسار عبر واتساب</span>
+            </a>
+          ) : (
+            <button type="button" className="product-card__add" disabled>
+              <span>غير متوفر</span>
+            </button>
+          )}
         </div>
       </article>
     )
@@ -90,7 +97,7 @@ function ProductCard({
   }
 
   function handleIncrease() {
-    if (!cartKey) return
+    if (!cartKey || !isOrderable) return
     onIncreaseQuantity(cartKey)
   }
 
@@ -101,20 +108,23 @@ function ProductCard({
 
   return (
     <article
-      className="product-card"
+      className={`product-card${!isOrderable ? ' product-card--unavailable' : ''}`}
       data-product-id={product.id}
       data-card-quantity={quantity}
     >
       <div className="product-card__body">
         <span
-          className={`product-card__availability${isAvailable ? '' : ' product-card__availability--unavailable'}`}
+          className={`product-card__availability${isOrderable ? '' : ' product-card__availability--unavailable'}`}
         >
           <span className="product-card__availability-dot" aria-hidden="true" />
-          {isAvailable ? 'متاح' : 'غير متاح'}
+          {isOrderable ? 'متوفر' : 'غير متوفر'}
         </span>
         <h3 className="product-card__name">{product.name}</h3>
         {product.description ? (
           <p className="product-card__description">{product.description}</p>
+        ) : null}
+        {!isOrderable && categoryUnavailable ? (
+          <p className="product-card__unavailable-note">القسم غير متوفر حاليًا</p>
         ) : null}
 
         <div className="product-card__options">
@@ -139,6 +149,7 @@ function ProductCard({
                     className="product-card__option"
                     aria-pressed={selections[group.id] === value.id}
                     data-option-value={value.id}
+                    disabled={!isOrderable}
                     onClick={() => handleOptionSelect(group.id, value.id)}
                   >
                     {value.label}
@@ -149,7 +160,7 @@ function ProductCard({
           ))}
 
           {!hasSizeGroup ? (
-            <p className="product-card__no-sizes">لا تتوفر أحجام مختلفة</p>
+            <p className="product-card__no-sizes">لا توجد أحجام متاحة</p>
           ) : null}
 
           {hasPriceError ? (
@@ -179,7 +190,7 @@ function ProductCard({
             </>
           ) : (
             <span className="product-card__price-prompt">
-              {hasPriceError ? 'السعر غير متاح' : missingPrompt}
+              {!isOrderable ? 'غير متوفر' : hasPriceError ? 'السعر غير متاح' : missingPrompt}
             </span>
           )}
         </p>
@@ -204,6 +215,7 @@ function ProductCard({
               type="button"
               aria-label={`زيادة كمية ${itemLabel}`}
               onClick={handleIncrease}
+              disabled={!isOrderable}
             >
               <PlusIcon />
             </button>
@@ -217,7 +229,7 @@ function ProductCard({
             onClick={handleAdd}
           >
             <PlusIcon />
-            <span>{isAvailable ? 'إضافة للسلة' : 'غير متوفر'}</span>
+            <span>{isOrderable ? 'أضف للسلة' : 'غير متوفر'}</span>
           </button>
         )}
       </div>
